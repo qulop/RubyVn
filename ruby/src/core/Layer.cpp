@@ -2,7 +2,7 @@
 
 
 namespace Ruby {
-    std::atomic<i64> Layer::s_unnamedLayersCounter = 0;
+    static std::atomic<i64> s_unnamedLayersCounter = 0;
 
 
     Layer::Layer() {

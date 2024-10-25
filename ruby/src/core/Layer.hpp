@@ -21,7 +21,5 @@ namespace Ruby {
 
     private:
         RubyString m_name;
-        
-        static std::atomic<i64> s_unnamedLayersCounter;
     };
 }
