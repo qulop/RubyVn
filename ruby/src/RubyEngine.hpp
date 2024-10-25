@@ -3,8 +3,7 @@
 
 #include "core/Application.hpp"
 #include "core/LayersStack.hpp"
-#include "core/ImGuiLayer.hpp"
-#include "core/IWindow.hpp"
+#include "core/Editor.hpp"
 #include "core/IWindow.hpp"
 #include "core/Layer.hpp"
 #include "core/WindowProps.hpp"

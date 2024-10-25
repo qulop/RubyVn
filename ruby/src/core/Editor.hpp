@@ -1,19 +1,20 @@
 #pragma once
 
+#include "Application.hpp"
 #include "Layer.hpp"
 #include "IWindow.hpp"
 
 
 namespace Ruby {
-    class ImGuiLayer : public Layer {
+    class Editor : public Layer {
     public:
-        ImGuiLayer();
+        Editor();
 
         void OnAttach() override;
         void OnDetach() override;
         void OnEvent(IEvent* event) override;
         void Update() override;
 
-        ~ImGuiLayer() override = default;
+        ~Editor() override = default;
     };
 }

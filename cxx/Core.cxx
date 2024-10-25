@@ -3,4 +3,4 @@
 #include "../ruby/src/core/IWindow.cpp"
 #include "../ruby/src/core/Layer.cpp"
 #include "../ruby/src/core/LayersStack.cpp"
-#include "../ruby/src/core/ImGuiLayer.cpp"
+#include "../ruby/src/core/Editor.cpp"

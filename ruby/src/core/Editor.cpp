@@ -1,8 +1,9 @@
-#include "ImGuiLayer.hpp"
+#include "Editor.hpp"
 #include "Application.hpp"
 
 #include <types/Logger.hpp>
 #include <utility/Assert.hpp>
+#include <events/EventManager.hpp>
 
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -10,11 +11,11 @@
 
 
 namespace Ruby {
-    ImGuiLayer::ImGuiLayer() :
-        Layer("ImGui")
+    Editor::Editor() :
+        Layer("RubyEngine Editor")
     {}
 
-    void ImGuiLayer::OnAttach() {
+    void Editor::OnAttach() {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui::StyleColorsClassic();
@@ -34,23 +35,27 @@ namespace Ruby {
 
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)window->GetNativeWindowPtr(), true);
         ImGui_ImplOpenGL3_Init("#version 330 core");
+
+        addEventListener(RUBY_ANY_EVENT, &Editor::OnEvent, this);
     }
 
-    void ImGuiLayer::OnDetach() {
+    void Editor::OnDetach() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
-    void ImGuiLayer::OnEvent(IEvent* event) {
+    void Editor::OnEvent(IEvent* event) {
 
     }
 
-    void ImGuiLayer::Update() {
+    void Editor::Update() {
         ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-
+        static bool isShow = true;
+        ImGui::ShowDemoWindow(&isShow);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
