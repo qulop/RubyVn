@@ -159,7 +159,7 @@ namespace Ruby {
     bool ProgramOptions::ExtractOptionName(RubyString& arg) const {
         size_t beginOfFlagName = arg.find_first_not_of('-');
         if (beginOfFlagName == std::string::npos) {
-            writeInConsoleF("Failed to find name of option: {}\n", arg);
+            writeInConsoleF("Failed to find name of option: \"--{}\"\n", arg);
             return false;
         }
 
@@ -169,13 +169,14 @@ namespace Ruby {
 
     void ProgramOptions::AddRemainingRequiredOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end) {
         for (auto opt = begin; opt != end; opt++) {
-            if (m_options.contains(opt->longName))
+            bool isDefaultValueExists = !std::holds_alternative<std::monostate>(opt->defaultValue);
+
+            if (m_options.contains(opt->longName) || !isDefaultValueExists)
                 continue;
             m_options[opt->longName] = opt->defaultValue;
         }
     }
 
-    // Edit a name
     bool ProgramOptions::IsOptionExistsInTable(const ProgramOptions::OptionsMapType& map, const RubyString& flag) const {
         if (map.contains(flag))
             return true;

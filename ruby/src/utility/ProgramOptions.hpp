@@ -55,6 +55,7 @@ namespace Ruby {
         static bool IsFlag(const char* arg);
 
     public:
+        ProgramOptions() = default;
         ProgramOptions(i32 argc, char** argv, std::initializer_list<CmdLineOption> opts);
 
         ProgramOptions(const ProgramOptions& other);
