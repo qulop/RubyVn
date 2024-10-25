@@ -2,9 +2,9 @@
 
 
 namespace Ruby::Time {
-    namespace time = std::chrono;
+    namespace chrono = std::chrono;
 
-    using SteadyTimePoint   = time::time_point<time::steady_clock, time::duration<double, std::milli>>;
+    using SteadyTimePoint   = chrono::time_point<chrono::steady_clock, chrono::duration<double, std::milli>>;
     using TimeRep           = SteadyTimePoint::rep;
 
 
@@ -19,7 +19,7 @@ namespace Ruby::Time {
         duration -= mins;
 
 
-        auto ms = time::duration_cast<time::milliseconds>(duration);
+        auto ms = chrono::duration_cast<chrono::milliseconds>(duration);
         
     }
 
@@ -33,7 +33,8 @@ namespace Ruby::Time {
     }
 
 
-    template<typename ClockType = time::steady_clock, 
+
+    template<typename ClockType = chrono::steady_clock, 
             typename TimePoint = ClockType::time_point>
     class StopWatch {
         using Duration = ClockType::duration;
@@ -43,7 +44,7 @@ namespace Ruby::Time {
             m_begin(now())
         {}
 
-        Duration Elapsed() {
+        Duration GetElapsed() {
             return now() - m_begin;
         }
 
