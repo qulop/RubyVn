@@ -28,6 +28,7 @@ namespace Ruby {
 
         static void DrawQuad();
 
+
         static void DrawLine();
 
         static void DrawCircle();

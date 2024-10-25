@@ -35,15 +35,15 @@ namespace Ruby::Win32 {
     }
 
     void WaveOutAudioOutputStream::Close() {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
     }
 
     void WaveOutAudioOutputStream::SetVolume(f64 volume) {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
     }
 
     void WaveOutAudioOutputStream::ResetVolume() {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
     }
 
     f64 WaveOutAudioOutputStream::GetVolume(f64 volume) const {

@@ -23,6 +23,10 @@ namespace Ruby {
         return m_logger;
     }    
 
+    bool Logger::IsInitialized() const {
+        return m_logger != nullptr;
+    }
+
 
     void Logger::InitLogger(std::filesystem::path loggerPath, const char* fileName, const char* coreName) {
         loggerPath

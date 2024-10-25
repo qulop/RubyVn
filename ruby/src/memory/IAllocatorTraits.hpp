@@ -5,7 +5,9 @@
 
 namespace Ruby::Memory {
     namespace Details {
-        constexpr size_t ALLOC_DEFAULT_POOL_SIZE = 1024 * 64; // 64Kb
+        constexpr size_t STACK_ALLOC_MAX = 1024 * 16;   // 16kb
+
+        constexpr size_t ALLOC_DEFAULT_POOL_SIZE = 1024 * 4; // 4Kb
     };
 
 
@@ -18,6 +20,15 @@ namespace Ruby::Memory {
             size(s),
             ptr(p)
         {}
+
+        template<typename Tx>
+        Tx* GetPtr() {
+            return static_cast<Tx*>(ptr);
+        }
+
+        bool IsAllocated() const {
+            return ptr == nullptr;
+        }
     };
 
 

@@ -3,8 +3,7 @@
 #include <types/TypeTraits.hpp>
 
 
-namespace Ruby::Keys
-{  
+namespace Ruby::Keys {
     constexpr i32 KEY_NONE = -1;
 
 
@@ -140,4 +139,18 @@ namespace Ruby::Keys
     constexpr i32  KEY_RIGHT_SUPER = 347;
     constexpr i32  KEY_MENU = 348;
     constexpr i32  KEY_LAST = KEY_MENU;
+
+
+    constexpr i32 KEY_MOUSE_BUTTON_1  = 0;
+    constexpr i32 KEY_MOUSE_BUTTON_2  = 1;
+    constexpr i32 KEY_MOUSE_BUTTON_3  = 2;
+    constexpr i32 KEY_MOUSE_BUTTON_4  = 3;
+    constexpr i32 KEY_MOUSE_BUTTON_5  = 4;
+    constexpr i32 KEY_MOUSE_BUTTON_6  = 5;
+    constexpr i32 KEY_MOUSE_BUTTON_7  = 6;
+    constexpr i32 KEY_MOUSE_BUTTON_8  = 7;
+    constexpr i32 KEY_MOUSE_BUTTON_LAST = KEY_MOUSE_BUTTON_8;
+    constexpr i32 KEY_MOUSE_BUTTON_LEFT = KEY_MOUSE_BUTTON_1;
+    constexpr i32 KEY_MOUSE_BUTTON_RIGHT = KEY_MOUSE_BUTTON_1;
+    constexpr i32 KEY_MOUSE_BUTTON_MIDDLE = KEY_MOUSE_BUTTON_3;
 }

@@ -11,8 +11,8 @@ ProgramOptions initApplicationOptions(int argc, char** argv) {
     using Ruby::OptionArgumentType;
 
     auto&& [screenX, screenY] = Platform::getScreenResolution();
-    auto&& [defaultWidth, defaultHeight] = std::make_pair(static_cast<i32>(screenX * 0.75),
-                                                          static_cast<i32>(screenY * 0.5));
+    auto&& [defaultWidth, defaultHeight] = std::make_pair(static_cast<i32>(screenX * 0.9),
+                                                          static_cast<i32>(screenY * 0.95));
 
     ProgramOptions opts { argc, argv, {
         { "width", CLI_ARG_INT, defaultWidth },
@@ -39,12 +39,14 @@ i32 main(int argc, char** argv) {
     #endif
 
     auto& app = Application::GetInstance();
-    app.InitEngine(std::move(options));
+    app.InitApplication(std::move(options));
 
     if (!app.IsInitialized()) {
-        Platform::writeInConsole("Failed to initialize application -- abort");
+        Platform::writeInConsole("Failed to initialize application (╥﹏╥)");
         return EXIT_FAILURE;
     }
+
+    app.StartApplication();
 
     return EXIT_SUCCESS;
 }

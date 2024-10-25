@@ -1,17 +1,5 @@
 #pragma once
 
-/*
-    --- MemoryPool structure ---
-
-
-    --------------------------------------
-    | Header(4 bytes) | Allocated memory |
-    --------------------------------------
-    Chunk header contains 
-
-*/
-
-
 #include "IAllocatorTraits.hpp"
 #include <types/StdInc.hpp>
 

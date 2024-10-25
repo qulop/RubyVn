@@ -1,8 +1,9 @@
 #include "Shader.hpp"
 
-#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
+#include <types/Logger.hpp>
 #include <utility/Assert.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -118,12 +119,8 @@ namespace Ruby {
     }
 
     void Shader::Compile() {
-        for (const auto& shader: m_sources) {
-            ShaderTypes type = shader.first;
-            const char* source = shader.second.data();
-
-            m_shadersId[type] = CompileShader(type, source);
-        }
+        for (const auto& [type, source]: m_sources)
+            m_shadersId[type] = CompileShader(type, source.data());
 
         m_programId = glCreateProgram();
         for (const auto& id : m_shadersId)

@@ -37,6 +37,7 @@ namespace Ruby {
         using Ptr = std::shared_ptr<Tx>;
 
         RUBY_NODISCARD Ptr<Details::RubyLogger::VendorLogger> GetVendorLogger() const;
+        RUBY_NODISCARD bool IsInitialized() const;
 
         void InitLogger(std::filesystem::path loggerPath,
                         const char* fileName = Details::RubyLogger::defaultFile,
