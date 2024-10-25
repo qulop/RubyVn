@@ -24,34 +24,34 @@ namespace Ruby {
     };
 
 
-    class RUBY_API Font {
+    class RUBY_API FontTTF {
         using Path = std::filesystem::path;
     public:
-        Font();
-        Font(const RubyString& path, u32 height=50, u32 width=0); // If width set to 0 FreeType will automaticaly calculate the width,
+        FontTTF() = default;
+        FontTTF(const RubyString& path, u32 height=50, u32 width=0); // If width set to 0 FreeType will automaticaly calculate the width,
                                                                   // based on given height
 
-        void LoadFont(const RubyString& name);
+        void LoadFontTTF(const RubyString& name);
 
         void SetNewDimensions(u32 height, u32 width);
  
-        Opt<Glyph> GetGlyph(char ch) const; // For now supported only English alphabet 
-        std::string_view GetFamily() const;
+        RUBY_NODISCARD Opt<Glyph> GetGlyph(char ch) const; // For now supported only English alphabet
+        RUBY_NODISCARD std::string_view GetFamily() const;
 
         bool IsLoaded() const;
 
-        bool operator==(const Font& other);
-        bool operator!=(const Font& other);
+        bool operator==(const FontTTF& other);
+        bool operator!=(const FontTTF& other);
 
-        ~Font();
+        ~FontTTF();
     
     private:
         void LoadGlyphs();
-        bool FetchSystemFont(const Path& name) const;
+        bool FetchSystemFontTTF(const Path& name) const;
 
     private:
         RubyHashMap<char, Glyph> m_chars;
-        RubyString m_fontFamily;
+        RubyString m_FontTTFFamily;
 
         FT_Library m_lib = nullptr;
         RubyVector<FT_Face> m_styles;

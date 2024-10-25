@@ -1,29 +1,24 @@
-#include "Font.hpp"
+#include "FontTTF.hpp"
 
 #include <platform/Platform.hpp>
 #include <utility/Assert.hpp>
 
 
 namespace Ruby {
-    Font::Font() {
-        FetchSystemFont("arial.ttf");
-        SetNewDimensions(50, 0);
-    }
-
-    Font::Font(const RubyString& path, u32 height, u32 width) {
-        LoadFont(path);
+    FontTTF::FontTTF(const RubyString& path, u32 height, u32 width) {
+        LoadFontTTF(path);
         SetNewDimensions(height, width);
     }
 
 
-    void Font::LoadFont(const RubyString& path) {
+    void FontTTF::LoadFontTTF(const RubyString& path) {
         if (!m_lib && FT_Init_FreeType(&m_lib)) {
                 RUBY_CRITICAL("FreeType criritcal error: cannot to initialize a library");
                 return;
         }
 
         if (FT_New_Face(m_lib, path.c_str(), 0, &m_face))
-            if (!FetchSystemFont(path))
+            if (!FetchSystemFontTTF(path))
                 return;
 
         glEnable(GL_BLEND);
@@ -31,19 +26,19 @@ namespace Ruby {
     }
 
 
-    void Font::SetNewDimensions(u32 width, u32 height) {
-        RUBY_ASSERT(m_face != nullptr, "You firstly must load font(init FreeType library) before setting it's dimensions!");
+    void FontTTF::SetNewDimensions(u32 width, u32 height) {
+        RUBY_ASSERT(m_face != nullptr, "You firstly must load FontTTF(init FreeType library) before setting it's dimensions!");
 
         FT_Set_Pixel_Sizes(m_face, width, height);
         LoadGlyphs();
 
-        if (m_fontFamily != m_face->family_name) { 
-            m_fontFamily = m_face->family_name; 
+        if (m_FontTTFFamily != m_face->family_name) { 
+            m_FontTTFFamily = m_face->family_name; 
         }
     }
 
 
-    std::optional<Glyph> Font::GetGlyph(char ch) const {
+    std::optional<Glyph> FontTTF::GetGlyph(char ch) const {
         try { 
             return m_chars.at(ch); 
         }
@@ -53,34 +48,33 @@ namespace Ruby {
     }
 
 
-    std::string_view Font::GetFamily() const {
-        return m_fontFamily; 
+    std::string_view FontTTF::GetFamily() const {
+        return m_FontTTFFamily; 
     }
 
 
-    bool Font::IsLoaded() const {
-        // m_face->family_name is <char*>
-        // m_fontFamily is <RubyString>
-        return (m_face && m_face->family_name == m_fontFamily);
+    // ?????????
+    bool FontTTF::IsLoaded() const {
+        return (m_face && m_face->family_name == m_FontTTFFamily);
     }
 
     
-    Font::~Font() {
+    FontTTF::~FontTTF() {
         FT_Done_Face(m_face);
         FT_Done_FreeType(m_lib);
     }
 
 
-    bool Font::operator==(const Font& other) { 
-        return m_fontFamily == other.m_fontFamily; 
+    bool FontTTF::operator==(const FontTTF& other) { 
+        return m_FontTTFFamily == other.m_FontTTFFamily; 
     }
 
-    bool Font::operator!=(const Font& other) { 
+    bool FontTTF::operator!=(const FontTTF& other) { 
         return !(*this == other); 
     }
 
 
-    void Font::LoadGlyphs(void) {
+    void FontTTF::LoadGlyphs(void) {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         for (char i = 0; i < 128; i++) {
@@ -113,23 +107,23 @@ namespace Ruby {
     }
 
 
-    bool Font::FetchSystemFont(const Path& name) const {
-//        std::filesystem::path fontsDest = (getPlatform() == PLATFORM_WINDOWS) ?
-//                "C:\\Windows\\Fonts\\" : " /usr/local/share/fonts";
+    bool FontTTF::FetchSystemFontTTF(const Path& name) const {
+//        std::filesystem::path FontTTFsDest = (getPlatform() == PLATFORM_WINDOWS) ?
+//                "C:\\Windows\\FontTTFs\\" : " /usr/local/share/FontTTFs";
 //
-//        auto&& completePath = fontsDest / name;
+//        auto&& completePath = FontTTFsDest / name;
 //        if (FT_New_Face(m_lib, completePath.string().c_str(), 0, &m_face))
-//            RUBY_ERROR("Font::FetchSystemFont() : failed to load specified font {}", name.string());
+//            RUBY_ERROR("FontTTF::FetchSystemFontTTF() : failed to load specified FontTTF {}", name.string());
 //
-//        for (auto& font : std::filesystem::directory_iterator(fontsDest))
+//        for (auto& FontTTF : std::filesystem::directory_iterator(FontTTFsDest))
 //        {
-//            auto&& fontStr = font.path().string();
+//            auto&& FontTTFStr = FontTTF.path().string();
 //
-//            if (!FT_New_Face(m_lib, fontStr.c_str(), 0, &m_face))
+//            if (!FT_New_Face(m_lib, FontTTFStr.c_str(), 0, &m_face))
 //                return true;
 //        }
 //
-//        RUBY_CRITICAL("Font::FetchSystemFont() : failed to load any font");
+//        RUBY_CRITICAL("FontTTF::FetchSystemFontTTF() : failed to load any FontTTF");
         return false;
     }
 }

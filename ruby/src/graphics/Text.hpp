@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility/Definitions.hpp>
-#include "Font.hpp"
+#include "FontTTF.hpp"
 
 
 namespace Ruby {
@@ -9,9 +9,9 @@ namespace Ruby {
     public:
         Text() = default;
         Text(const RubyString& text);
-        Text(const Font& font);
-        Text(const RubyString& text, const Font& font);
-        Text(const RubyString& text, size_t widht, size_t height, const Font& font);
+        Text(const FontTTF& FontTTF);
+        Text(const RubyString& text, const FontTTF& FontTTF);
+        Text(const RubyString& text, size_t widht, size_t height, const FontTTF& FontTTF);
 
         void SetDimensions(size_t width, size_t height);
         void Set(const RubyString& text);
@@ -25,6 +25,6 @@ namespace Ruby {
 
     private:
         RubyString m_text;
-        Font m_font;
+        FontTTF m_font;
     };
 }
