@@ -112,6 +112,8 @@ namespace Ruby {
 
 
 	GLFWWindow::~GLFWWindow() {
+        EventManager::GetInstance().Clear();
+        
         glfwDestroyWindow(m_window); 
         glfwTerminate();
 
