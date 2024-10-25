@@ -4,7 +4,6 @@
 
 #include <types/Logger.hpp>
 #include <X11/Xlib.h>
-#include <sys/mman.h>
 
 
 namespace Ruby::Platform {
@@ -19,17 +18,23 @@ namespace Ruby::Platform {
     }
 
     void errorBox(const char* msg, const char* title) noexcept {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
     }
 
     void infoBox(const char* msg, const char* title) noexcept {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
+    }
+
+    void writeInConsole(const RubyString& msg, bool isFlush) {
+        RUBY_NOT_IMPLEMENTED();
+    }
+
+    Ptr<wchar_t> getSystemLocale() {
+        RUBY_NOT_IMPLEMENTED();
     }
 
     void* virtualAlloc(void* address, size_t len, size_t alignment) {
-        RUBY_NOT_IMPLEMENTED;
-
-        return nullptr;
+        RUBY_NOT_IMPLEMENTED();
 
         // void* mapping = mmap(address,
         //                      len,
@@ -44,5 +49,9 @@ namespace Ruby::Platform {
         // }
 
         // return mapping;
+    }
+
+    void virtualFree(void* address, size_t len) {
+        RUBY_NOT_IMPLEMENTED();
     }
 }

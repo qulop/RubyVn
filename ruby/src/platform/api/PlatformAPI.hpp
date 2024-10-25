@@ -11,7 +11,10 @@ namespace Ruby::Platform {
     void errorBox(const RubyString& msg, const RubyString& title) noexcept;
     void infoBox(const RubyString& msg, const RubyString& title) noexcept;
 
-    void writeInConsole(const RubyString& msg);
+    void writeInConsole(const RubyString& msg, bool isFlush=true);
+
+    Ptr<wchar_t> getSystemLocale();
+    Ptr<wchar_t> getSystemEncoding();
 
     void* virtualAlloc(void* address, size_t len, size_t alignment);
     void virtualFree(void* address, size_t len=0);

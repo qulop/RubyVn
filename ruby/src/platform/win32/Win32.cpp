@@ -13,7 +13,7 @@ namespace Ruby::Platform {
         return std::make_pair(width, height);
     }
 
-    void writeInConsole(const RubyString& msg) {
+    void writeInConsole(const RubyString& msg, bool isFlush) {
         HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
         if (hnd == NULL || hnd == INVALID_HANDLE_VALUE) {
             errorBox("writeInConsole() : Failed to get STD_OUTPUT_HANDLE", "Terminate");
@@ -22,6 +22,17 @@ namespace Ruby::Platform {
         
         DWORD written;
         WriteConsoleA(hnd, msg.c_str(), static_cast<DWORD>(msg.size()), &written, nullptr);
+        
+        if (isFlush)
+            FlushFileBuffers(GetStdHandle(STD_OUTPUT_HANDLE));
+    }
+
+    Ptr<wchar_t> getSystemLocale() {
+        Ptr<wchar_t> localeStr = std::make_shared<wchar_t>();
+        if (GetUserDefaultLocaleName(localeStr.get(), LOCALE_NAME_MAX_LENGTH) == 0)
+            return nullptr;
+
+        return localeStr;
     }
 
     void errorBox(const RubyString& msg, const RubyString& title) noexcept {
@@ -33,7 +44,7 @@ namespace Ruby::Platform {
     }
 
     void* virtualAlloc(void* address, size_t len, size_t alignment) {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
 
         return nullptr;
     }
