@@ -1,6 +1,9 @@
 #include <core/EngineGlobalConfig.hpp>
 
 namespace Ruby {
+    EngineGlobalConfig g_globalConfig;
+
+
     RubyString getParentPath(const RubyString& path) {
         std::filesystem::path fsPath{ path };
 
@@ -9,7 +12,7 @@ namespace Ruby {
 
 
 
-    void EngineGlobalConfig::Init(ProgramOptions&& opts) {
+    void EngineGlobalConfig::InitFromCommandLine(ProgramOptions&& opts) {
         if (opts.HasOption("max-fps"))
             maxFPS = std::any_cast<i32>(opts.GetArgumentOfOption("max-fps"));
 
