@@ -13,11 +13,11 @@ namespace Ruby {
         RUBY_DEFINE_SINGLETON(Application)
 
     public:
-        void InitEngine(ProgramOptions&& opts);
+        void InitApplication(ProgramOptions&& opts);
 
         RUBY_NODISCARD bool IsInitialized() const;
 
-        void Start();
+        void StartApplication();
         void Finish();
 
         void PushBottomLayer(Layer* layer);

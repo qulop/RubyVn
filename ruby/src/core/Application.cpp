@@ -5,35 +5,41 @@
 
 #include "EngineGlobalConfig.hpp"
 #include "Application.hpp"
-#include "Timer.hpp"
+#include <types/Timer.hpp>
+
+#include "Editor.hpp"
 
 
 namespace Ruby {
-    void Application::InitEngine(ProgramOptions&& opts) {
-        auto& globalConfig = EngineGlobalConfig::GetInstance();
-        globalConfig.Init(std::move(opts));
+    void Application::InitApplication(ProgramOptions&& opts) {
+        g_globalConfig.InitFromCommandLine(std::move(opts));
 
-        Logger::GetInstance().InitLogger(globalConfig.loggerBaseDirectory);
+        Logger::GetInstance().InitLogger(g_globalConfig.loggerBaseDirectory);
 
-        m_window = IWindow::Create(globalConfig.videoConfig);
+        m_window = IWindow::Create(g_globalConfig.videoConfig);
+
+        auto* editor = new Editor;
+        PushTopLayer(editor);
 
         Renderer::Init();
-        RUBY_SWITCH_BOOL(m_isInitialized);
+        
+        m_isInitialized.exchange(true, std::memory_order_relaxed);
     }
 
     
     bool Application::IsInitialized() const {
-        return m_isInitialized;
+        return m_isInitialized.load(std::memory_order_relaxed);
     }
 
 
-    void Application::Start() {
-        RUBY_ASSERT(m_isInitialized, "Application must be initialized before launch!");
+    void Application::StartApplication() {
+        RUBY_ASSERT(m_isInitialized.load(std::memory_order_relaxed), 
+            "Application must be initialized before launch!");
 
         auto lastTime = Time::getCurrentTimeRep();
         Time::TimeRep accumulator = 0;
 
-        while (m_isRunning) {
+        while (m_isRunning.load(std::memory_order_relaxed)) {
             auto currentTime = Time::getCurrentTimeRep();
             auto deltaTime = currentTime - lastTime;
 
@@ -54,7 +60,7 @@ namespace Ruby {
     }
 
     void Application::Finish() {
-        m_isRunning = false;
+        m_isRunning.store(false);
     }
 
     void Application::PushBottomLayer(Layer* layer) {
