@@ -47,7 +47,7 @@ namespace Ruby::Win32 {
     }
 
     f64 WaveOutAudioOutputStream::GetVolume(f64 volume) const {
-        RUBY_NOT_IMPLEMENTED;
+        RUBY_NOT_IMPLEMENTED();
 
         return 0.0f;
     }

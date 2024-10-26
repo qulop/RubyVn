@@ -58,7 +58,7 @@ namespace Ruby {
         RubyHashMap<ShaderTypes, u32> m_shadersId;
         RubyHashMap<ShaderTypes, RubyString> m_sources;
 
-        u32 m_programId = 0;
+        u32 m_programId = RUBY_UNDEFINED_ID;
         std::atomic<bool> m_isReady = false;
     };
 }

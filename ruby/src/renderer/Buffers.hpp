@@ -69,7 +69,7 @@ namespace Ruby {
         ~VertexBuffer();
 
     private:
-        u32 m_id = -1;
+        u32 m_id = RUBY_UNDEFINED_ID;
         LayoutType m_layout;
     };
 
@@ -89,7 +89,7 @@ namespace Ruby {
         ~IndexBuffer();
 
     private:
-        u32 m_id = -1;
+        u32 m_id = RUBY_UNDEFINED_ID;
         size_t m_count = 0;
     };
 }

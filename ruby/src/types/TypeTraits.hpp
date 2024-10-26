@@ -32,6 +32,9 @@ namespace Ruby {
     }
 
     using RubyString                        = std::string;
+    using RubyWideString                    = std::wstring;
+
+    using RubyPath                          = std::filesystem::path;
 
     template<typename Tx, typename Ty>
     using RubyHashMap                       = std::unordered_map<Tx, Ty>;

@@ -21,7 +21,7 @@ namespace Ruby {
         ~VertexArray();
 
     private:
-        u32 m_id = -1;
+        u32 m_id = RUBY_UNDEFINED_ID;
 
         RubyVector<VertexBuffer> m_vertexBuffers;
         IndexBuffer m_ebo;

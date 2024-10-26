@@ -27,13 +27,6 @@ namespace Ruby {
 
     public:
         void InitFromCommandLine(ProgramOptions&& opts);
-
-        template<typename Tx, typename Ty>
-        void SetState(Tx EngineGlobalState::* globalConfigState, Ty&& newValue) {
-            RUBY_LOCK_MUTEX(m_mutex);
-
-            this->*globalConfigState = std::forward<Ty>(newValue);
-        }
     };
 
     

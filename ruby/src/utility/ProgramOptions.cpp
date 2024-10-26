@@ -126,14 +126,11 @@ namespace Ruby {
         if (this == &other)
             return *this;
 
-        m_argc = other.m_argc;
-        m_argv = other.m_argv;
+        m_argc = std::exchange(other.m_argc, 0);
+        m_argv = std::exchange(other.m_argv, nullptr);
         m_appPath = std::move(other.m_appPath);
         m_options = std::move(other.m_options);
-        m_isParseProcessed.exchange(other.m_isParseProcessed.load());
-
-        other.m_argc = 0;
-        other.m_argv = nullptr;
+        m_isParseProcessed.store(other.m_isParseProcessed.exchange(false));
 
         return *this;
     }
