@@ -16,15 +16,8 @@ namespace Ruby::Details::Assert {
         RubyString msg = std::format(std::move(fmt), std::forward<Args>(args)...);
         auto res = _getAssertionString(expr, msg, loc);
 
-        #ifndef RUBY_CURRENTLY_TESTED
-            Platform::writeInConsole(res.c_str());
-        #endif
-
-        #ifndef RUBY_CURRENTLY_TESTED
-            std::abort();
-        #else
-            // _rubyNotifyAboutAbort();
-        #endif
+        Platform::writeInConsole(res.c_str());
+        std::abort();
 
         return false;
     }

@@ -3,10 +3,6 @@
 
 
 namespace Ruby::Details::Assert {
-    static std::atomic<bool> s_disableAbort = false;
-    static std::atomic<bool> s_disableOutput = false;
-
-
     RubyString _getAssertionString(const char* expr, const RubyString& msg, std::source_location& loc) {
         auto res = std::format("Assertion failed:\n\t-- Expression: {}\n\t-- File: {}\n\t-- Line: {}\n",
                                expr, loc.file_name(), loc.line());
