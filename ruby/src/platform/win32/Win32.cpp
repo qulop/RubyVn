@@ -50,5 +50,13 @@ namespace Ruby::Platform {
 
         return HeapAlloc(hHeap, HEAP_ALLOC_FLAGS, size);
     }
+
+    void virtualFree(void* address, size_t size) {
+        HANDLE hHeap = GetProcessHeap();
+        if (hHeap == static_cast<HANDLE>(NULL))
+            return;
+
+        HeapFree(hHeap, NULL, address);
+    }
     }
 }
