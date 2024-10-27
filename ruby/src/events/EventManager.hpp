@@ -1,13 +1,14 @@
 #pragma once
 
 #include <utility/Definitions.hpp>
+#include <utility/Assert.hpp>
+#include <types/Logger.hpp>
 #include <types/Singleton.hpp>
+#include <types/StdInc.hpp>
 
 #include "KeyboardEvent.hpp"
 #include "MouseEvent.hpp"
 
-#include <utility/Definitions.hpp>
-#include <types/StdInc.hpp>
 
 
 namespace Ruby {
@@ -16,6 +17,8 @@ namespace Ruby {
         using IDType = i64;
         using Delegate = std::function<void(IEvent*)>;
 
+    public:
+        EventListener() = default;
         EventListener(IDType id, EventType eventType, Delegate&& delegate);
 
         RUBY_NODISCARD IDType GetID() const noexcept;
@@ -24,7 +27,7 @@ namespace Ruby {
         void Call(IEvent* event) const noexcept;
 
     private:
-        IDType m_id = 0;
+        IDType m_id = RUBY_UNDEFINED_ID;
         EventType m_eventType;
         Delegate m_delegate;
     };
@@ -32,15 +35,50 @@ namespace Ruby {
 
     class EventManager : public Singleton<EventManager> {
         RUBY_DEFINE_SINGLETON(EventManager)
+
+    private:
+        using KeyType = EventType;
+        using ValueType = RubyVector<EventListener>;
+
     public:
-        bool RemoveListener(const EventListener& listener);
-        void Clear();
+        static void Init() {
+            RUBY_DEBUG("EventManager::Init() : Initialization...");
+
+            auto& eventBus = GetInstance().m_bus;
+            auto&& reflector = EnumReflector::Create<EventType>();
+
+            // Initialize and reserve memory for a vector for each event type
+            for (const auto& enumField : reflector) {
+                auto key = (KeyType)enumField.GetValue();
+                if (key == RUBY_NONE_EVENT)
+                    continue;
+
+                eventBus[key] = std::move(ValueType{});
+                eventBus.at(key).reserve(10);
+            }
+
+            auto& inst = GetInstance();
+        }
+
+    public:
+        RUBY_NODISCARD size_t GetNumberOfEventListeners(EventType type) const {
+            return (m_bus.find(type) != m_bus.end()) ? m_bus.at(type).size() : 0;
+        }
+
+        RUBY_NODISCARD size_t GetTotalNumberOfListeners() const {
+            return std::accumulate(m_bus.begin(), m_bus.end(), (size_t)0, [](size_t acc, const auto& pair) {
+                const auto& [eventType, vec] = pair;
+                return acc + vec.size();
+            });
+        }
 
         template<typename EventType> 
             requires std::derived_from<EventType, IEvent>
         void Excite(EventType&& event) {
-            RUBY_LOCK_MUTEX(MutexType);
-            if (m_bus.count(event.GetType()) == 0)
+            RUBY_ASSERT(m_bus.find(event.GetType()) != m_bus.end(), "First you need to initialize the EventManager!");
+
+            std::lock_guard guard{ m_mutex };
+            if (m_bus.find(event.GetType()) == m_bus.end())
                 return;
 
             for (auto&& listener: m_bus[event.GetType()])
@@ -48,18 +86,41 @@ namespace Ruby {
         }
 
         template<Concepts::Callable Func>
-        const EventListener& AddListener(EventType type, Func&& delegate) {
-            RUBY_LOCK_MUTEX(MutexType);
+        RUBY_NODISCARD const EventListener& AddListener(EventType type, Func&& delegate) {
+            RUBY_ASSERT(m_bus.find(type) != m_bus.end(), "First you need to initialize the EventManager!");
+
+            std::lock_guard guard{ m_mutex };
             static EventListener::IDType id = 0;
 
-            m_bus[type].emplace_back(id, type, std::forward<Func>(delegate));
+            m_bus.at(type).emplace_back(id, type, std::forward<Func>(delegate));
             ++id;
 
-            return m_bus[type].back();
+            RUBY_ASSERT_BASIC(m_bus.at(type).back().GetID() != RUBY_UNDEFINED_ID);
+            return m_bus.at(type).back();
+        }
+
+        RUBY_NODISCARD bool RemoveListener(const EventListener& listener) {
+            RUBY_ASSERT(m_bus.find(listener.GetEventType()) != m_bus.end(), "First you need to initialize the EventManager!");
+
+            std::lock_guard guard{ m_mutex };
+            auto&& listenersIt = m_bus.find(listener.GetEventType());
+            if (listenersIt == m_bus.end())
+                return false;
+
+            auto&& it = std::remove_if(listenersIt->second.begin(), listenersIt->second.end(),
+                                       [&listener](const auto& containedListener) {
+                                           return (containedListener.GetID() == listener.GetID());
+                                       });
+
+            return !(it == std::end(listenersIt->second));
+        }
+
+        void Clear() {
+            m_bus.clear();
         }
 
     private:
-        RubyHashMap<EventType, std::vector<EventListener>> m_bus;
+        RubyHashMap<KeyType, ValueType> m_bus;
     };
 
 
