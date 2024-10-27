@@ -82,5 +82,10 @@ namespace Ruby::Platform {
     bool resumeThread(void* thread) {
         return ResumeThread(thread) != static_cast<DWORD>(-1);
     }
+
+    bool terminateThread(void* thread, unsigned long reason) {
+        // Dont sure about need to close the handle
+        return TerminateThread(thread, reason) != FALSE;
+    }
     }
 }
