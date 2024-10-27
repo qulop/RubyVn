@@ -35,15 +35,15 @@ namespace Ruby::Details::Assert {
 
 #ifndef _NDEBUG
     #define RUBY_ASSERT(expr, fmt, ...)     \
-        (static_cast<bool>(expr) || (Ruby::Details::Assert::_rubyAssert(#expr, fmt, std::source_location::current(), __VA_ARGS__)))
+        (static_cast<bool>(expr) || (Ruby::Details::Assert::_rubyAssert(#expr, fmt, std::source_location::current() __VA_OPT__(,) __VA_ARGS__)))
 
     #define RUBY_ASSERT_BASIC(expr)         \
         (static_cast<bool>(expr) || (Ruby::Details::Assert::_rubyAssert(#expr)))
 #else
-    #define RUBY_ASSERT(expr, msg)
-    #define RUBY_ASSERT_BASIC(expr)
+    #define RUBY_ASSERT(expr, msg)      ((void)0)
+    #define RUBY_ASSERT_BASIC(expr)     ((void)0)
 #endif
 
 
-#define RUBY_WRECK(msg, ...)            Ruby::Details::Assert::_rubyWreck(msg, __VA_ARGS__)
+#define RUBY_WRECK(msg, ...)            Ruby::Details::Assert::_rubyWreck(msg __VA_OPT__(,) __VA_ARGS__)
 #define RUBY_NOT_IMPLEMENTED()          RUBY_WRECK("An unimplemented method(function) was called")

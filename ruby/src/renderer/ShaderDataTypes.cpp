@@ -57,6 +57,7 @@ namespace Ruby {
 
             default:
                 RUBY_WRECK("getShaderDataTypeSize() : Unknown shader type!");
+                return 0x0;
         }
     }
 
@@ -84,6 +85,7 @@ namespace Ruby {
 
             default:
                 RUBY_WRECK("getShaderTypeElementsCount() : Unknown shader type!");
+                return 0x0;
         }
     }
 }

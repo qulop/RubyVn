@@ -8,6 +8,10 @@ namespace Ruby {
         : m_bottomLayersBarrier(m_layers.end())
     {}
 
+    size_t LayersStack::Size() const {
+        return m_layers.size();
+    }
+
     void LayersStack::PushBottomLayer(Layer* layer) {
         auto iter = std::find(begin(), m_bottomLayersBarrier, layer);
         if (iter != m_bottomLayersBarrier)  // if layer already exists
@@ -57,8 +61,8 @@ namespace Ruby {
     }
 
     LayersStack::~LayersStack() {
-        for (auto* l : m_layers)
-            delete l;
+        for (auto* layer : m_layers)
+            delete layer;
     }
 
 

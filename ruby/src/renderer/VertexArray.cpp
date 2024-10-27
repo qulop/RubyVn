@@ -26,6 +26,7 @@ namespace Ruby {
 
             default:
                 RUBY_WRECK("toGLShaderType() : Unknown shader type!");
+                return 0x0;
         }
     }
 

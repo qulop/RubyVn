@@ -39,4 +39,4 @@
 #define loop                            while (true)
 // -----
 
-#define RUBY_UNDEFINED_ID                    -1
+#define RUBY_UNDEFINED_ID               (-1)

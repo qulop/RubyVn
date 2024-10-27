@@ -3,9 +3,6 @@
 #include <types/StdInc.hpp>
 
 
-#define RUBY_LOCK_MUTEX(MutexType)               std::lock_guard<MutexType> lock{ m_mutex }
-
-
 namespace Ruby {
     namespace Traits {
         template<typename Fn, typename... Args>

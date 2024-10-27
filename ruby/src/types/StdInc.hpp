@@ -40,3 +40,4 @@
 #include <limits>
 #include <exception>
 #include <charconv>
+#include <numeric>

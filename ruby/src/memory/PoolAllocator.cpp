@@ -33,7 +33,7 @@ namespace Ruby::Memory {
     }
 
     void* PoolAllocator::Allocate(size_t n) {
-        RUBY_LOCK_MUTEX(std::mutex);
+        std::lock_guard guard{ m_mutex };(std::mutex);
 
     }
 
@@ -41,7 +41,7 @@ namespace Ruby::Memory {
         RUBY_MAYBE_UNUSED bool isPtrInRange = ((byte*)ptr >= m_memory) && ((byte*)ptr <= GetEndOfAllocatedMemory());
         RUBY_ASSERT(isPtrInRange, "Pointer is out of allocated memory range!");
         
-        RUBY_LOCK_MUTEX(std::mutex);
+        std::lock_guard guard{ m_mutex };(std::mutex);
 
     }
 
@@ -50,7 +50,7 @@ namespace Ruby::Memory {
         if (*this == other)
             return *this;
 
-        RUBY_LOCK_MUTEX(std::mutex);
+        std::lock_guard guard{ m_mutex };(std::mutex);
         m_memory = other.m_memory;
         m_metadata = other.m_metadata;
         m_chunkSize = other.m_chunkSize;
@@ -63,7 +63,7 @@ namespace Ruby::Memory {
         if (*this == other)
             return *this;
 
-        RUBY_LOCK_MUTEX(std::mutex);
+        std::lock_guard guard{ m_mutex };(std::mutex);
         m_memory = std::exchange(other.m_memory, nullptr);
         m_metadata = std::move(other.m_metadata);
         m_chunkSize = std::exchange(other.m_chunkSize, 0);

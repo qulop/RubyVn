@@ -13,17 +13,19 @@ namespace Ruby {
 
         LayersStack();
 
+        RUBY_NODISCARD size_t Size() const;
+
         void PushBottomLayer(Layer* layer);
         Layer* PopBottomLayer(Layer* layer=nullptr);
 
         void PushTopLayer(Layer* layer);
         Layer* PopTopLayer(Layer* layer=nullptr);
 
-        Iterator begin();
-        RevIterator rbegin();
+        RUBY_NODISCARD Iterator begin();
+        RUBY_NODISCARD RevIterator rbegin();
 
-        Iterator end();
-        RevIterator rend();
+        RUBY_NODISCARD Iterator end();
+        RUBY_NODISCARD RevIterator rend();
 
         ~LayersStack();
 

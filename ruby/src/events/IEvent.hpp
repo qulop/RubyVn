@@ -7,13 +7,14 @@
 namespace Ruby {
     RUBY_ENUM(EventType,
         RUBY_NONE_EVENT       = 0,
-        RUBY_ANY_EVENT        = (1 << 1),
-        RUBY_MOUSE_PRESSED    = (1 << 2),
-        RUBY_MOUSE_RELEASED   = (1 << 3),
-        RUBY_MOUSE_MOVED      = (1 << 4),
-        RUBY_MOUSE_SCROLLED   = (1 << 5),
-        RUBY_KEY_PRESSED      = (1 << 6),
-        RUBY_KEY_RELEASED     = (1 << 7)
+        RUBY_MOUSE_PRESSED    = (1 << 1),
+        RUBY_MOUSE_RELEASED   = (1 << 2),
+        RUBY_MOUSE_MOVED      = (1 << 3),
+        RUBY_MOUSE_SCROLLED   = (1 << 4),
+        RUBY_KEY_PRESSED      = (1 << 5),
+        RUBY_KEY_RELEASED     = (1 << 6),
+        RUBY_ANY_EVENT        = RUBY_MOUSE_PRESSED | RUBY_MOUSE_RELEASED | RUBY_MOUSE_MOVED |
+                                RUBY_MOUSE_SCROLLED | RUBY_KEY_PRESSED | RUBY_KEY_RELEASED
     )
 
 
