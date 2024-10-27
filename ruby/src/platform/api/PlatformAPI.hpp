@@ -5,6 +5,8 @@
 
 
 namespace Ruby::Platform {
+    using threadproc_t = unsigned long(*)(void*);
+
     // Will return X as first and Y as second
     std::pair<i32, i32> getScreenResolution() noexcept;
 
@@ -16,6 +18,12 @@ namespace Ruby::Platform {
     Ptr<wchar_t> getSystemLocale();
     Ptr<wchar_t> getSystemEncoding();
 
-    void* virtualAlloc(void* address, size_t len, size_t alignment);
-    void virtualFree(void* address, size_t len=0);
+    void* virtualAlloc(size_t size);
+    void virtualFree(void* address, size_t size=0);
+
+    void* createThread(threadproc_t procedure, void* arg, size_t stackSize=0, bool suspended=false, unsigned long* threadId=nullptr);
+    bool suspendThread(void* thread);
+    bool resumeThread(void* thread);
+    bool terminateThread(void* thread, unsigned long reason = EXIT_SUCCESS);
+    bool setThreadPriority(void* thread, i32 priority);
 }

@@ -1,3 +1,4 @@
+#include <types/Threading.hpp>
 #include "src/RubyEngine.hpp"
 #ifdef RUBY_DEBUG_BUILD
     #include "tests/cases/TestCases.hpp"
@@ -37,6 +38,8 @@ i32 main(int argc, char** argv) {
         if (options.HasOption("test-mode")) // NOLINT
             return RUBY_RUN_ALL_TESTS(options);
     #endif
+
+    T::Create(2);
 
     auto& app = Application::GetInstance();
     app.InitApplication(std::move(options));
