@@ -16,13 +16,13 @@
 
 
 namespace Ruby {
-    namespace Details::RubyLogger {
+    namespace Details::LoggerDetails {
         using VendorLogger      = spdlog::logger;
         using DailySink         = spdlog::sinks::daily_file_sink_mt;
         using ConsoleSink       = spdlog::sinks::stdout_color_sink_mt;
 
         extern const char* logsDirectory;
-        extern const char* defaultFile;
+        extern const char* defaultFileName;
         extern const char* defaultLoggerName;
 
         void destroyApp(const RubyString& msg);
@@ -33,44 +33,42 @@ namespace Ruby {
         RUBY_DEFINE_SINGLETON(Logger);
 
     public:
-        template<typename Tx>
-        using Ptr = std::shared_ptr<Tx>;
+        static void Init(RubyPath loggerPath,
+                       const char* fileName = Details::LoggerDetails::defaultFileName,
+                       const char* coreName = Details::LoggerDetails::defaultLoggerName);
 
-        RUBY_NODISCARD Ptr<Details::RubyLogger::VendorLogger> GetVendorLogger() const;
+    public:
+        RUBY_NODISCARD Ptr<Details::LoggerDetails::VendorLogger> GetLogger() const;
         RUBY_NODISCARD bool IsInitialized() const;
 
-        void InitLogger(std::filesystem::path loggerPath,
-                        const char* fileName = Details::RubyLogger::defaultFile,
-                        const char* coreName = Details::RubyLogger::defaultLoggerName);
-
-        private:
-            Ptr<Details::RubyLogger::VendorLogger> m_logger = nullptr;
+    private:
+        Ptr<Details::LoggerDetails::VendorLogger> m_logger = nullptr;
     };
 
 
-    namespace Details::RubyLogger {
+    namespace Details::LoggerDetails {
         template<typename... Args>
         void critical(spdlog::format_string_t<Args...> format, Args&&... args) {
             auto&& msg = fmt::format(format, std::forward<Args>(args)...);
-            Logger::GetInstance().GetVendorLogger()->critical(std::move(format), std::forward<Args>(args)...);
+            Logger::GetInstance().GetLogger()->critical(std::move(format), std::forward<Args>(args)...);
 
             destroyApp(msg);
         }
 
         template<typename Tx>
         void critical(const Tx& format) {
-            Logger::GetInstance().GetVendorLogger()->critical(format);
+            Logger::GetInstance().GetLogger()->critical(format);
 
             destroyApp(format);
         }
     }
 }
 
-#define RUBY_DEBUG(...)            Ruby::Logger::GetInstance().GetVendorLogger()->debug(__VA_ARGS__)
-#define RUBY_INFO(...)             Ruby::Logger::GetInstance().GetVendorLogger()->info(__VA_ARGS__)
-#define RUBY_WARNING(...)          Ruby::Logger::GetInstance().GetVendorLogger()->warn(__VA_ARGS__)
-#define RUBY_ERROR(...)            Ruby::Logger::GetInstance().GetVendorLogger()->error(__VA_ARGS__)
-#define RUBY_CRITICAL(...)         Ruby::Details::RubyLogger::critical(__VA_ARGS__)
+#define RUBY_DEBUG(...)            Ruby::Logger::GetInstance().GetLogger()->debug(__VA_ARGS__)
+#define RUBY_INFO(...)             Ruby::Logger::GetInstance().GetLogger()->info(__VA_ARGS__)
+#define RUBY_WARNING(...)          Ruby::Logger::GetInstance().GetLogger()->warn(__VA_ARGS__)
+#define RUBY_ERROR(...)            Ruby::Logger::GetInstance().GetLogger()->error(__VA_ARGS__)
+#define RUBY_CRITICAL(...)         Ruby::Details::LoggerDetails::critical(__VA_ARGS__)
 
 #ifdef RUBY_MSVC_USED
     #pragma warning(pop)
