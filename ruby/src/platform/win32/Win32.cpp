@@ -58,5 +58,21 @@ namespace Ruby::Platform {
 
         HeapFree(hHeap, NULL, address);
     }
+
+    void* createThread(threadproc_t procedure, void* arg, size_t stackSize, bool suspended, unsigned long* threadId) {
+        HANDLE hThread = CreateThread(
+            nullptr,
+            stackSize,
+            procedure,
+            arg,
+            suspended ? CREATE_SUSPENDED : 0,
+            threadId
+        );
+
+        if (hThread == NULL)
+            return nullptr;
+
+        return hThread;
+    }
     }
 }

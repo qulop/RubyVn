@@ -5,6 +5,8 @@
 
 
 namespace Ruby::Platform {
+    using threadproc_t = unsigned long(*)(void*);
+
     // Will return X as first and Y as second
     std::pair<i32, i32> getScreenResolution() noexcept;
 
