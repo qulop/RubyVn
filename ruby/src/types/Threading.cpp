@@ -1,7 +1,7 @@
 #include "threading.hpp"
 
 namespace Ruby {
-#ifdef _WIN32
+#ifdef RUBY_MSVC_USED
 	unsigned long __stdcall Thread::ThreadProc(void* arg) {
 #endif
 		Thread* self = reinterpret_cast<Thread*>(arg);
@@ -117,7 +117,7 @@ namespace Ruby {
 		if (m_thread == nullptr)
 			delete this;
 
-#ifdef _WIN32
+#ifdef RUBY_MSVC_USED
 		// Converting our thread priority format to windows format
 		int winPriority = THREAD_PRIORITY_NORMAL;
 		switch (m_priority) {
@@ -147,7 +147,7 @@ namespace Ruby {
 		if (m_thread != nullptr) {
 			m_state = STATUS_THREAD_DESTROYED;
 
-#ifdef _WIN32
+#ifdef RUBY_MSVC_USED
 			WaitForSingleObject(m_thread, INFINITE);
 
 			CloseHandle(m_thread);
@@ -165,7 +165,7 @@ namespace Ruby {
 	const threadinfo_t Thread::Priority(threadinfo_t priority) {
 		m_priority = priority;
 
-#ifdef _WIN32
+#ifdef RUBY_MSVC_USED
 		// Converting our thread priority format to windows format
 		int winPriority = THREAD_PRIORITY_NORMAL;
 		switch (m_priority) {
