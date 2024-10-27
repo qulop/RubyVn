@@ -43,9 +43,12 @@ namespace Ruby::Platform {
         MessageBoxA(nullptr, msg.c_str(), title.c_str(), MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND);
     }
 
-    void* virtualAlloc(void* address, size_t len, size_t alignment) {
-        RUBY_NOT_IMPLEMENTED();
+    void* virtualAlloc(size_t size) {
+        HANDLE hHeap = GetProcessHeap();
+        if (hHeap == static_cast<HANDLE>(NULL))
+            return nullptr;
 
-        return nullptr;
+        return HeapAlloc(hHeap, HEAP_ALLOC_FLAGS, size);
+    }
     }
 }
