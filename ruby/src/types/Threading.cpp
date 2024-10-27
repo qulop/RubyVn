@@ -6,7 +6,7 @@ namespace Ruby {
 #endif
 		Thread* self = reinterpret_cast<Thread*>(arg);
 
-		while (true) {
+		loop {
 			threadinfo_t lostate = self->m_state & 0xF;
 
 			self->m_state		= STATUS_THREAD_STARTING | lostate;
