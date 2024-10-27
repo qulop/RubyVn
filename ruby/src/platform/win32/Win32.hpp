@@ -8,3 +8,9 @@
 #define interface struct
 
 #include "audio/WaveOutAudioOutputStream.hpp"
+
+#ifdef _DEBUG
+#define HEAP_ALLOC_FLAGS HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY
+#else
+#define HEAP_ALLOC_FLAGS HEAP_ZERO_MEMORY
+#endif
