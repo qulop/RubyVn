@@ -39,7 +39,7 @@ i32 main(int argc, char** argv) {
             return RUBY_RUN_ALL_TESTS(options);
     #endif
 
-    T::Create(2);
+    Ruby::Threading::Create(2);
 
     auto& app = Application::GetInstance();
     app.InitApplication(std::move(options));
