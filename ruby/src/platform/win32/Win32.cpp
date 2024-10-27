@@ -87,5 +87,8 @@ namespace Ruby::Platform {
         // Dont sure about need to close the handle
         return TerminateThread(thread, reason) != FALSE;
     }
+
+    bool setThreadPriority(void* thread, i32 priority) {
+        return SetThreadPriority(thread, priority) != FALSE;
     }
 }
