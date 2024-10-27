@@ -78,5 +78,9 @@ namespace Ruby::Platform {
     bool suspendThread(void* thread) {
         return Wow64SuspendThread(thread) != static_cast<DWORD>(-1);
     }
+
+    bool resumeThread(void* thread) {
+        return ResumeThread(thread) != static_cast<DWORD>(-1);
+    }
     }
 }
