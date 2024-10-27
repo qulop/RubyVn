@@ -13,12 +13,14 @@ endif()
 # -----------------------
 
 # CMake config
+set(CMAKE_SYSTEM_PROCESSOR x86_64)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 # -----------------------
 
+add_compile_definitions(FUCK_YEAH)
 if(WIN32)
     add_compile_definitions(RUBY_WIN32_USED)
 elseif(UNIX)
@@ -27,14 +29,17 @@ endif()
 
 # Compilers flags
 if (MSVC)
-    add_compile_options(/wd4251)
+    add_compile_options(/wd4251 /Zc:preprocessor)
     add_compile_definitions(RUBY_MSVC_USED)
-elseif(GNUC)
+    message(------------------------MSVC)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-attributes)
     add_compile_definitions(RUBY_GCC_USED)
-elseif(CLANG)
+    message(------------------------GNU)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wno-undefined-var-template)
     add_compile_definitions(RUBY_CLANG_USED)
+    message(------------------------CLANG)
 endif()
 #----------------------
 
@@ -47,7 +52,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_compile_definitions(RUBY_ENGINE_BUILD RUBY_OPENGL_USED)
 if (CMAKE_BUILD_TYPE EQUAL Release)
-	add_compile_definitions(_NDEBUG RUBY_RELEASE_BUILD)
+	add_compile_definitions(RUBY_RELEASE_BUILD)
 else()
     add_compile_definitions(RUBY_DEBUG_BUILD)
 endif()
@@ -83,11 +88,8 @@ endforeach()
 
 add_executable(${CMAKE_PROJECT_NAME} ${RUBY_SRC})
 
-find_package(OpenGL REQUIRED)
-if(NOT ${OpenGL_FOUND})
-    message(FATAL_ERROR "Failed to find OpenGL!")
-endif()
 
+find_package(OpenGL REQUIRED)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw
                                             PRIVATE glad
                                             PRIVATE freetype
