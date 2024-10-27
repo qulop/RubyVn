@@ -1,20 +1,23 @@
+#include "EngineGlobalConfig.hpp"
+#include "Application.hpp"
+#include "Editor.hpp"
+
 #include <renderer/Renderer.hpp>
 #include <platform/Platform.hpp>
 #include <types/Logger.hpp>
 #include <utility/Assert.hpp>
-
-#include "EngineGlobalConfig.hpp"
-#include "Application.hpp"
 #include <types/Timer.hpp>
-
-#include "Editor.hpp"
+#include <events/EventManager.hpp>
 
 
 namespace Ruby {
     void Application::InitApplication(ProgramOptions&& opts) {
         g_globalConfig.InitFromCommandLine(std::move(opts));
 
-        Logger::GetInstance().InitLogger(g_globalConfig.loggerBaseDirectory);
+        Logger::Init(g_globalConfig.loggerBaseDirectory);
+        EventManager::Init();
+
+        auto& a = EventManager::GetInstance();
 
         m_window = IWindow::Create(g_globalConfig.videoConfig);
 
@@ -40,17 +43,17 @@ namespace Ruby {
         Time::TimeRep accumulator = 0;
 
         while (m_isRunning.load(std::memory_order_relaxed)) {
+            auto& a = EventManager::GetInstance();
+
             auto currentTime = Time::getCurrentTimeRep();
             auto deltaTime = currentTime - lastTime;
 
             m_window->PollEvents();
 
             // Starts from top layers
-            auto layersIt = std::rbegin(m_layers);
-            for (layersIt; layersIt != std::rend(m_layers); layersIt++) {
-                auto layer = *layersIt;
-                layer->Update();
-            }
+            auto layerIt = m_layers.rbegin();
+            for (layerIt; layerIt != m_layers.rend(); ++layerIt)
+                (*layerIt)->Update();
 
             if (!m_window->Update())
                 Finish();
@@ -60,7 +63,7 @@ namespace Ruby {
     }
 
     void Application::Finish() {
-        m_isRunning.store(false);
+        m_isRunning.store(false, std::memory_order_seq_cst);
     }
 
     void Application::PushBottomLayer(Layer* layer) {
