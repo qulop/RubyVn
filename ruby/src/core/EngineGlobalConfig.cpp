@@ -1,7 +1,9 @@
 #include <core/EngineGlobalConfig.hpp>
 
 namespace Ruby {
-    EngineGlobalConfig g_globalConfig;
+    namespace Globals {
+        EngineGlobalConfig globalConfig;
+    }
 
 
     RubyString getParentPath(const RubyString& path) {

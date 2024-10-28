@@ -19,8 +19,8 @@ namespace Ruby {
         
         VideoStruct videoConfig;
 
-        Ptr<wchar_t> engineLocale;
-        Ptr<char> engineEncoding;
+        SharedPtr<wchar_t> engineLocale;
+        SharedPtr<char> engineEncoding;
 
     private:
         std::mutex m_mutex;
@@ -29,6 +29,7 @@ namespace Ruby {
         void InitFromCommandLine(ProgramOptions&& opts);
     };
 
-    
-    extern EngineGlobalConfig g_globalConfig;
+    namespace Globals {
+        extern EngineGlobalConfig globalConfig;
+    }
 }
