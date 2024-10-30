@@ -38,8 +38,12 @@ invoke_setup() {
     ./venv/Scripts/pip3 install -r requirements.txt
     ./venv/Scripts/python setup.py
     deactivate
+    cd ../
 }
 
+
+
+cd scripts/
 if command -v python3 &>/dev/null; then
     invoke_setup
     exit 0

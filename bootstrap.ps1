@@ -18,7 +18,6 @@ function Get-Confirmation() {
     }
 }
 
-
 function Enter-Venv() {
     if (-not (Test-Path -Path "venv" -PathType Container)) {
         python3 -m venv venv
@@ -47,9 +46,12 @@ function Invoke-Setup() {
 
     .\venv\Scripts\python .\setup.py
     deactivate
+    Set-Location -Path "../"
 }
 
 
+
+Set-Location -Path "scripts/"
 $is_python = Get-Command python3 -ErrorAction SilentlyContinue
 if ($is_python) {
     Invoke-Setup
