@@ -1,71 +1,50 @@
 from pathlib import Path
-import shutil
+from tqdm import tqdm
 import subprocess
-import os
+import requests
 
 
-class ConstantView:
-    def __init__(self, value):
-        self.__value = value
-
-    def get(self):
-        return self.__value
-    
-    def __str__(self):
-        return str(self.__value)
-    
-
-ROOT_FOLDER = ConstantView(Path(os.path.dirname(__file__)).parent)
-CALL_DIR = ConstantView(os.getcwd())
-
-ENGINE_NAME = ConstantView("RubyEngine")
-PLAYGROUND_NAME = ConstantView("RubyDemo")
+def get_boolean_user_input(promptForInput) -> bool:
+    promptForInput += " [Y/N]: "
+    print(promptForInput, end="")
+    while True:
+        res = str(input()).strip().lower()
+        match res:
+            case "yes" | "y" | "true":
+                return True
+            case "no" | "n" | "false":
+                return False
+        
+        print("Incorrect input. Please, try again: ", end="")
 
 
-# - Searches recursively files with specified pattern
-#       and extesions, starting from <directory>.
-# - Return list of tuples: 
-#       First element of tuple is file name
-#       Second element is absolute path to this file
-def find_recursive(directory: str, pattern: str, extensions: list = None) -> list:
-    result = []
-    append_to_result = lambda f, p: result.append((f, p))
+def download_file(url: str, filename: str) -> bool:
+    response = requests.get(url, stream=True)
+    total_size = int(response.headers.get("content-length", 0))
+    block_size = 1024
+    with tqdm(total=total_size, unit="ib", unit_scale=True) as progress_bar:
+        with open(filename, "wb") as file:
+            for chunk in response.iter_content(block_size):
+                progress_bar.update(len(chunk))
+                file.write(chunk)
 
+    if total_size != 0 and progress_bar.n != total_size:
+        return False
+        
+    return True
+
+
+def safe_check_output(command: str) -> str | None:
+    command = command.split(" ")
+    try:
+        output = subprocess.check_output(command)
+        return output.decode()
+    except subprocess.CalledProcessError or FileNotFoundError:
+        return None
+        
+
+def find_recursive(directory: str, pattern: str) -> Path | None:
     for path in Path(directory).rglob(pattern):
-        file = path.name
-
-        splitted_name = path.name.split(".")
-
-        # For filter files with several extensions. For example, RubyEngine.*.*
-        if len(splitted_name) > 2:
-            continue
-
-        if not extensions:
-            append_to_result(file, path)
-            continue
-
-        startswith = file.startswith(pattern.split(".")[0])
-        if startswith and splitted_name[1] in extensions:
-            append_to_result(file, path)
-
-    return result
-
-
-def move_file_to(filename: str, file_dir: str, destination: str) -> None:
-    full_file_path = f"{file_dir}\\{filename}"
-
-    shutil.move(full_file_path, f"{destination}\\{filename}")
-
-
-def go_to_build_directory():
-    if not os.path.isdir("build"):
-        os.mkdir("build")
-    os.chdir("build/")
-
-
-def execute(conf: str, build: str) -> int:
-    config_code = subprocess.call(["cmake"] + conf.split())
-    build_code = subprocess.call(["cmake"] + build.split())
-    if config_code != 0 or build_code != 0:
-        return -1
-    return 0
+        if str(path.name) == pattern:
+            return path
+    return None
