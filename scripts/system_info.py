@@ -16,7 +16,7 @@ class SystemInfo:
         self.arch = arch
 
     @staticmethod
-    def fetch():
+    def fetch() -> 'SystemInfo':
         os_name = platform.system()
         os_version = platform.version()
         arch = platform.machine()

@@ -2,11 +2,12 @@ from pathlib import Path
 from tqdm import tqdm
 import subprocess
 import requests
+import os
 
 
-def get_boolean_user_input(promptForInput) -> bool:
-    promptForInput += " [Y/N]: "
-    print(promptForInput, end="")
+def get_user_confirmation(prompt: str) -> bool:
+    prompt += " [y/n]: "
+    print(prompt, end="")
     while True:
         res = str(input()).strip().lower()
         match res:
@@ -30,14 +31,12 @@ def download_file(url: str, filename: str) -> bool:
 
     if total_size != 0 and progress_bar.n != total_size:
         return False
-        
     return True
 
 
 def safe_check_output(command: str) -> str | None:
-    command = command.split(" ")
     try:
-        output = subprocess.check_output(command)
+        output = subprocess.check_output(command.split(), stderr=subprocess.STDOUT, shell=False)
         return output.decode()
     except subprocess.CalledProcessError or FileNotFoundError:
         return None
@@ -47,4 +46,4 @@ def find_recursive(directory: str, pattern: str) -> Path | None:
     for path in Path(directory).rglob(pattern):
         if str(path.name) == pattern:
             return path
-    return None
+    return

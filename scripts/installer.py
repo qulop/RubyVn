@@ -18,7 +18,7 @@ class Installer:
         return True
     
     @staticmethod
-    def __download_package(os_name: str, target_url: str, win32_package: str, linux_package: str) -> bool:
+    def __install_package(os_name: str, target_url: str, win32_package: str, linux_package: str) -> bool:
         os_name = os_name.lower()
         assert(os_name == "windows" or os_name == "linux")
 
@@ -36,14 +36,14 @@ class Installer:
 
     @staticmethod
     def install_cmake(os_name: str) -> bool:
-        return Installer.__download_package(os_name=os_name, 
+        return Installer.__install_package(os_name=os_name, 
                                         target_url="https://github.com/Kitware/CMake/releases/download/v3.31.0-rc3/",
                                         win32_package="cmake-3.31.0-rc3-windows-x86_64.msi", 
                                         linux_package="cmake-3.31.0-rc3.tar.gz")
     
     @staticmethod
     def install_llvm(os_name: str) -> bool:
-        return Installer.__download_package(os_name=os_name, 
+        return Installer.__install_package(os_name=os_name, 
                                     target_url="https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.0/",
                                     win32_package="LLVM-19.1.0-win64.exe",
                                     linux_package="LLVM-19.1.0-Linux-X64.tar.xz")
