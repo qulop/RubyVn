@@ -38,10 +38,10 @@ namespace Ruby {
 
     template<typename Tx, typename Allocator=std::allocator<Tx>>
     using RubyVector                        = std::vector<Tx>;
-   
-    template<typename Tx>
-    using Ptr                               = std::shared_ptr<Tx>;
 
+    template<typename Tx>
+    using SharedPtr = std::shared_ptr<Tx>;
+   
     template<typename Tx>
     using Opt                               = std::optional<Tx>;
 

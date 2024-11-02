@@ -23,13 +23,13 @@ namespace Ruby {
         void PushBottomLayer(Layer* layer);
         void PushTopLayer(Layer* layer);
 
-        RUBY_NODISCARD const Ptr<IWindow>& GetWindow() const;
+        RUBY_NODISCARD const SharedPtr<IWindow>& GetWindow() const;
 
         ~Application() override = default;
 
     private:
         LayersStack m_layers;
-        Ptr<IWindow> m_window;  // I still think that std::unique_ptr needed here
+        SharedPtr<IWindow> m_window;  // I still think that std::unique_ptr needed here
 
         std::atomic<bool> m_isInitialized = false;
         std::atomic<bool> m_isRunning = true;

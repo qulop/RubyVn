@@ -1,5 +1,7 @@
 #include "RubyUtility.hpp"
 
+#include <types/Logger.hpp>
+
 
 namespace Ruby {
     RubyString extractTextFromFile(std::string_view path) {

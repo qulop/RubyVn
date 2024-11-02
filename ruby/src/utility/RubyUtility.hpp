@@ -22,17 +22,17 @@ namespace Ruby {
     }
 
     template<typename Tx, typename... Args>
-    Ptr<Tx> MakePtr(Args&&... args) {
+    SharedPtr<Tx> makeShared(Args&&... args) {
         return std::make_shared<Tx>(std::forward<Args>(args)...);
     }
 
     template<typename Tx>
-    Ptr<Tx> MakePtr(size_t size) {
+    SharedPtr<Tx> makeShared(size_t size) {
         return std::make_shared<Tx>(size);
     }
 
-    template<typename Tx, typename Ptr>
-    Tx* isInstanceOf(Ptr* ptr) {
+    template<typename Tx, typename SharedPtr>
+    Tx* isInstanceOf(SharedPtr* ptr) {
         return dynamic_cast<Tx*>(ptr);
     }
 }

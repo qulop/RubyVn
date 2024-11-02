@@ -28,6 +28,6 @@ namespace Ruby {
         virtual ~IWindow() = default;
 
     public:
-        static Ptr<IWindow> Create(VideoStruct vs);
+        static SharedPtr<IWindow> Create(VideoStruct vs);
     };
 }

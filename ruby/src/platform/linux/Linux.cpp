@@ -29,7 +29,7 @@ namespace Ruby::Platform {
         RUBY_NOT_IMPLEMENTED();
     }
 
-    Ptr<wchar_t> getSystemLocale() {
+    SharedPtr<wchar_t> getSystemLocale() {
         RUBY_NOT_IMPLEMENTED();
     }
 

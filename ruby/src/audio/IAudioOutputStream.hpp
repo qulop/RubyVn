@@ -17,6 +17,6 @@ namespace Ruby {
         virtual ~IAudioOutputStream() = default;
 
     public:
-        static Ptr<IAudioOutputStream> Create(const AudioParams& params);
+        static SharedPtr<IAudioOutputStream> Create(const AudioParams& params);
     };
 }

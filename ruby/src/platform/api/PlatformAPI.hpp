@@ -7,7 +7,13 @@
 namespace Ruby::Platform {
     using threadproc_t = unsigned long(*)(void*);
 
-    // Will return X as first and Y as second
+    struct LocaleInfo {
+        std::wstring_view systemLocale;
+        std::wstring_view systemEncoding;
+    };
+
+
+    // <width> as "std::pair::first", and <height> as "std::pair::second"
     std::pair<i32, i32> getScreenResolution() noexcept;
 
     void errorBox(const RubyString& msg, const RubyString& title) noexcept;
@@ -15,8 +21,10 @@ namespace Ruby::Platform {
 
     void writeInConsole(const RubyString& msg, bool isFlush=true);
 
-    Ptr<wchar_t> getSystemLocale();
-    Ptr<wchar_t> getSystemEncoding();
+    LocaleInfo getSystemLocaleInfo();
+
+    SharedPtr<wchar_t> getSystemLocale();
+    SharedPtr<wchar_t> getSystemEncoding();
 
     void* virtualAlloc(size_t size);
     void virtualFree(void* address, size_t size=0);

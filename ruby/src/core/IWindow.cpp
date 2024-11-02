@@ -3,7 +3,7 @@
 
 
 namespace Ruby {
-    Ptr<IWindow> IWindow::Create(VideoStruct vs) {
-        return MakePtr<GLFWWindow>(std::move(vs));
+    SharedPtr<IWindow> IWindow::Create(VideoStruct vs) {
+        return makeShared<GLFWWindow>(std::move(vs));
     }
 }
