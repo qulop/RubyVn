@@ -8,24 +8,43 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/ansicolor_sink.h>
 
 #include <utility/Definitions.hpp>
 #include <types/Singleton.hpp>
 
-#include <utility>
+#include "StdInc.hpp"
 
 
 namespace Ruby {
+    class RUBY_API Logger;  // Declaration for critical function (see bellow)
+
+
     namespace Details::LoggerDetails {
         using VendorLogger      = spdlog::logger;
         using DailySink         = spdlog::sinks::daily_file_sink_mt;
-        using ConsoleSink       = spdlog::sinks::stdout_color_sink_mt;
+        using ConsoleSink       = spdlog::sinks::ansicolor_stdout_sink_mt;
 
         extern const char* logsDirectory;
         extern const char* defaultFileName;
         extern const char* defaultLoggerName;
 
-        void destroyApp(const RubyString& msg);
+        void destroyAppWithErrorBox(const RubyString& msg);
+
+        template<typename... Args>
+        void critical(spdlog::format_string_t<Args...> format, Args&&... args) {
+            auto&& msg = fmt::format(format, std::forward<Args>(args)...);
+            Logger::GetInstance().GetLogger()->critical(std::move(format), std::forward<Args>(args)...);
+
+            destroyAppWithErrorBox(msg);
+        }
+
+        template<typename Tx>
+        void critical(const Tx& format) {
+            Logger::GetInstance().GetLogger()->critical(format);
+
+            destroyAppWithErrorBox(format);
+        }
     }
 
 
@@ -33,35 +52,20 @@ namespace Ruby {
         RUBY_DEFINE_SINGLETON(Logger);
 
     public:
+        using LoggerPtr = SharedPtr<Details::LoggerDetails::VendorLogger>;
+
+    public:
         static void Init(RubyPath loggerPath,
                        const char* fileName = Details::LoggerDetails::defaultFileName,
                        const char* coreName = Details::LoggerDetails::defaultLoggerName);
 
     public:
-        RUBY_NODISCARD Ptr<Details::LoggerDetails::VendorLogger> GetLogger() const;
+        RUBY_NODISCARD LoggerPtr GetLogger() const;
         RUBY_NODISCARD bool IsInitialized() const;
 
     private:
-        Ptr<Details::LoggerDetails::VendorLogger> m_logger = nullptr;
+        LoggerPtr m_logger = nullptr;
     };
-
-
-    namespace Details::LoggerDetails {
-        template<typename... Args>
-        void critical(spdlog::format_string_t<Args...> format, Args&&... args) {
-            auto&& msg = fmt::format(format, std::forward<Args>(args)...);
-            Logger::GetInstance().GetLogger()->critical(std::move(format), std::forward<Args>(args)...);
-
-            destroyApp(msg);
-        }
-
-        template<typename Tx>
-        void critical(const Tx& format) {
-            Logger::GetInstance().GetLogger()->critical(format);
-
-            destroyApp(format);
-        }
-    }
 }
 
 #define RUBY_DEBUG(...)            Ruby::Logger::GetInstance().GetLogger()->debug(__VA_ARGS__)
