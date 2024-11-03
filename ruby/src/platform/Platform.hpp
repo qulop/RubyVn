@@ -30,7 +30,7 @@ namespace Ruby {
     }
 
     template<typename... Args>
-    void errorBoxF(std::format_string<Args...> fmt, const RubyString& title, Args&&... args) noexcept {
+    void errorBoxF(std::format_string<Args...> fmt, const String& title, Args&&... args) noexcept {
         auto&& msg = std::format(std::move(fmt), std::forward<Args>(args)...);
 
         Platform::errorBox(msg, title);
@@ -38,7 +38,7 @@ namespace Ruby {
 
     template<typename... Args>
     void writeInConsoleF(std::format_string<Args...> fmt, Args&&... args) {
-        RubyString msg = std::format(std::move(fmt), std::forward<Args>(args)...);
+        String msg = std::format(std::move(fmt), std::forward<Args>(args)...);
 
         Platform::writeInConsole(msg);
     }

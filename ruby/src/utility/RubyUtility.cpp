@@ -4,7 +4,7 @@
 
 
 namespace Ruby {
-    RubyString extractTextFromFile(std::string_view path) {
+    String extractTextFromFile(std::string_view path) {
         FILE* file = nullptr;
 
         if (fopen_s(&file, path.data(), "rb"))
@@ -17,7 +17,7 @@ namespace Ruby {
         byte* buffer = new(std::nothrow) byte[fsize + 1];
         if (!buffer) {
             RUBY_ERROR("extractDataFromFile() : Failed to allocate memory for buffer");
-            return RubyString{ "" };
+            return String{ "" };
         }
 
         auto bytesRead = fread(buffer, sizeof(byte), fsize, file);
@@ -28,12 +28,12 @@ namespace Ruby {
 
         buffer[fsize] = '\0';
 
-        return RubyString { (char*)buffer };
+        return String { (char*)buffer };
     }
 
 
     Opt<bool> strToBool(const char* str) {
-        RubyString lowerStr{ str };
+        String lowerStr{ str };
         std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), tolower);
 
         return lowerStr == "true";

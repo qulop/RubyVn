@@ -28,16 +28,16 @@ namespace Ruby {
         concept STLContainterLike = true;
     }
 
-    using RubyString                        = std::string;
-    using RubyWideString                    = std::wstring;
+    using String                            = std::string;
+    using WideString                        = std::wstring;
 
-    using RubyPath                          = std::filesystem::path;
+    using Path                              = std::filesystem::path;
 
     template<typename Tx, typename Ty>
-    using RubyHashMap                       = std::unordered_map<Tx, Ty>;
+    using HashMap                           = std::unordered_map<Tx, Ty>;
 
     template<typename Tx, typename Allocator=std::allocator<Tx>>
-    using RubyVector                        = std::vector<Tx>;
+    using Vector                            = std::vector<Tx>;
 
     template<typename Tx>
     using SharedPtr = std::shared_ptr<Tx>;

@@ -6,7 +6,7 @@ namespace Ruby {
         // RUBY_MOUSE_PRESS && RUBY_MOUSE_RELEASED
         class _MouseButtonAction : public _EventBase {
         public:
-            RUBY_NODISCARD RubyString ToString() const override {
+            RUBY_NODISCARD String ToString() const override {
                 return std::format("{} : button = {}",
                                    m_reflector.GetByValue(m_type).GetFieldName(),
                                    button);
@@ -26,7 +26,7 @@ namespace Ruby {
         // RUBY_MOUSE_MOVED && RUBY_MOUSE_SCROLLED
         class _MouseStateAction : public _EventBase {
         public:
-            RUBY_NODISCARD RubyString ToString() const override {
+            RUBY_NODISCARD String ToString() const override {
                 return std::format("{} : xoff = {}, yoff = {}",
                                    m_reflector.GetByValue(m_type).GetFieldName(),
                                    xoff,

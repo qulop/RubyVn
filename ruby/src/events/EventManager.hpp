@@ -38,7 +38,7 @@ namespace Ruby {
 
     private:
         using KeyType = EventType;
-        using ValueType = RubyVector<EventListener>;
+        using ValueType = Vector<EventListener>;
 
     public:
         static void Init() {
@@ -120,7 +120,7 @@ namespace Ruby {
         }
 
     private:
-        RubyHashMap<KeyType, ValueType> m_bus;
+        HashMap<KeyType, ValueType> m_bus;
     };
 
 

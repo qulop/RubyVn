@@ -7,7 +7,7 @@
 
 
 namespace Ruby {
-    RubyString extractTextFromFile(std::string_view path);
+    String extractTextFromFile(std::string_view path);
     Opt<bool> strToBool(const char* str);
 
 

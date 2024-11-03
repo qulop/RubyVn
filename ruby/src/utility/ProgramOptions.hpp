@@ -11,7 +11,7 @@ namespace Ruby {
         template<typename Tx>
         concept AllowedArgumentType = 
             std::integral<Tx> || 
-            std::same_as<Tx, RubyString> ||
+            std::same_as<Tx, String> ||
             std::same_as<Tx, const char*>;
     }
 
@@ -24,9 +24,9 @@ namespace Ruby {
 
 
     struct CmdLineOption {
-        using ArgumentType = std::variant<std::monostate, i32, bool, RubyString>;
+        using ArgumentType = std::variant<std::monostate, i32, bool, String>;
 
-        RubyString longName;
+        String longName;
         OptionArgumentType type = CLI_ARG_STRING;
         ArgumentType defaultValue;
 
@@ -34,13 +34,13 @@ namespace Ruby {
         CmdLineOption() = default;
 
         template<Details::ProgramOptions::AllowedArgumentType Tx>
-        CmdLineOption(RubyString longName, OptionArgumentType type, Tx defaultValue) :
+        CmdLineOption(String longName, OptionArgumentType type, Tx defaultValue) :
             longName(std::move(longName)),
             type(type),
             defaultValue(std::move(defaultValue))
         {}
 
-        CmdLineOption(RubyString longName, OptionArgumentType type) :
+        CmdLineOption(String longName, OptionArgumentType type) :
             longName(std::move(longName)),
             type(type)
         {}
@@ -48,7 +48,7 @@ namespace Ruby {
 
 
     class RUBY_API ProgramOptions {
-        using OptionsMapType = RubyHashMap<RubyString, CmdLineOption>;
+        using OptionsMapType = HashMap<String, CmdLineOption>;
         using InitalizerListConstIterator = typename std::initializer_list<CmdLineOption>::const_iterator;
 
     public:
@@ -66,12 +66,12 @@ namespace Ruby {
         char* At(size_t i);
         char* operator[](size_t i);
 
-        RUBY_NODISCARD bool HasOption(const RubyString& opt) const;
-        RUBY_NODISCARD std::any GetArgumentOfOption(const RubyString& opt) const;
+        RUBY_NODISCARD bool HasOption(const String& opt) const;
+        RUBY_NODISCARD std::any GetArgumentOfOption(const String& opt) const;
 
         RUBY_NODISCARD i32 GetCount() const;
         char** GetRawOptions();
-        RUBY_NODISCARD RubyString GetAppPath() const;
+        RUBY_NODISCARD String GetAppPath() const;
 
         ProgramOptions& operator=(const ProgramOptions& other);
         ProgramOptions& operator=(ProgramOptions&& other) noexcept;
@@ -81,11 +81,11 @@ namespace Ruby {
     private:
         void CopyRawOptions(char** argv);
 
-        RUBY_NODISCARD bool ExtractOptionName(RubyString& arg) const;
+        RUBY_NODISCARD bool ExtractOptionName(String& arg) const;
 
         void AddRemainingRequiredOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end);
 
-        RUBY_NODISCARD bool IsOptionExistsInTable(const OptionsMapType& map, const RubyString& flag) const;
+        RUBY_NODISCARD bool IsOptionExistsInTable(const OptionsMapType& map, const String& flag) const;
         OptionsMapType CreateTableOfMandatoryOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end) const;
         bool ParseArgumentForOption(const CmdLineOption& opt, const char* arg);
 
@@ -93,11 +93,11 @@ namespace Ruby {
     private:
         int m_argc = 0;
         char** m_argv = nullptr;
-        RubyString m_appPath;
+        String m_appPath;
 
         std::atomic<bool> m_isParseProcessed = false;
         std::mutex m_parseMutex;
 
-        RubyHashMap<RubyString, typename CmdLineOption::ArgumentType> m_options;
+        HashMap<String, typename CmdLineOption::ArgumentType> m_options;
     };
 }

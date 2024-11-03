@@ -56,6 +56,6 @@ namespace Ruby::Memory {
         size_t m_numOfChunks = 0;
 
         byte* m_memory = nullptr;
-        RubyVector<Details::_PoolAllocatorHeader> m_metadata;
+        Vector<Details::_PoolAllocatorHeader> m_metadata;
     };
 }

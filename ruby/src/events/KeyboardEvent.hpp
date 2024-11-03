@@ -7,7 +7,7 @@ namespace Ruby {
     namespace Details::Events {
         class _KeyboardEvent : public _EventBase {
         public:
-            RUBY_NODISCARD RubyString ToString() const override {
+            RUBY_NODISCARD String ToString() const override {
                 return std::format("{} : key = {}, action = {}",
                                    m_reflector.GetByValue(m_type).GetFieldName(),
                                    key,

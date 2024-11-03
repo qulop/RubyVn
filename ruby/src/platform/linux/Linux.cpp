@@ -25,7 +25,7 @@ namespace Ruby::Platform {
         RUBY_NOT_IMPLEMENTED();
     }
 
-    void writeInConsole(const RubyString& msg, bool isFlush) {
+    void writeInConsole(const String& msg, bool isFlush) {
         RUBY_NOT_IMPLEMENTED();
     }
 

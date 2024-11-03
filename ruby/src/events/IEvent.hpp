@@ -21,7 +21,7 @@ namespace Ruby {
     interface IEvent {
     public:
         RUBY_NODISCARD virtual EventType GetType() const = 0;
-        RUBY_NODISCARD virtual RubyString ToString() const = 0;
+        RUBY_NODISCARD virtual String ToString() const = 0;
 
         virtual ~IEvent() = default;
     };

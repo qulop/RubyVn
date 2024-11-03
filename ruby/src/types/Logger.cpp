@@ -7,7 +7,7 @@
 
 namespace Ruby {
     namespace Details::LoggerDetails {
-        void destroyAppWithErrorBox(const RubyString& msg) {
+        void destroyAppWithErrorBox(const String& msg) {
             Platform::errorBox(msg, "Critical Error!");
             std::abort();
         }
@@ -18,7 +18,7 @@ namespace Ruby {
     }
 
 
-    void Logger::Init(RubyPath loggerPath, const char* fileName, const char* coreName) {
+    void Logger::Init(Path loggerPath, const char* fileName, const char* coreName) {
         loggerPath /= Details::LoggerDetails::logsDirectory;
         if (!std::filesystem::exists(loggerPath))
             std::filesystem::create_directory(loggerPath);
@@ -41,7 +41,7 @@ namespace Ruby {
         daily->set_pattern("[%l] <%m-%d-%Y %H:%M:%S> - [thread: %t] [PID: %P]: %v");
 
 
-        RubyVector<spdlog::sink_ptr> sinks = { std::move(console), std::move(daily) };
+        Vector<spdlog::sink_ptr> sinks = { std::move(console), std::move(daily) };
         instLogger = makeShared<Details::LoggerDetails::VendorLogger>(coreName, sinks.begin(), sinks.end());
 
         instLogger->set_level(RUBY_LOG_LEVEL);

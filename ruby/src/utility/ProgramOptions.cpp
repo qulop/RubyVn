@@ -30,7 +30,7 @@ namespace Ruby {
         OptionsMapType optionsMap = std::move(CreateTableOfMandatoryOptions(opts.begin(), opts.end()));
         
         for (auto tokenIndex = 0; tokenIndex < (m_argc - 1); tokenIndex++) {
-            RubyString token = At(tokenIndex);
+            String token = At(tokenIndex);
 
             if (!IsFlag(token.c_str())) {
                 writeInConsoleF("Argument doesn't apply to any flag: \"{}\"\n", token);
@@ -81,11 +81,11 @@ namespace Ruby {
         return m_argv[i];
     }
 
-    bool ProgramOptions::HasOption(const RubyString& opt) const {
+    bool ProgramOptions::HasOption(const String& opt) const {
         return m_options.contains(opt);
     }
 
-    std::any ProgramOptions::GetArgumentOfOption(const RubyString& opt) const {
+    std::any ProgramOptions::GetArgumentOfOption(const String& opt) const {
         if (!HasOption(opt) || std::holds_alternative<std::monostate>(m_options.at(opt)))
             return std::any{};
 
@@ -104,7 +104,7 @@ namespace Ruby {
         return m_argv;
     }
 
-    RubyString ProgramOptions::GetAppPath() const {
+    String ProgramOptions::GetAppPath() const {
         return m_appPath;
     }
 
@@ -153,7 +153,7 @@ namespace Ruby {
         m_argv[m_argc - 1] = nullptr;
     }
 
-    bool ProgramOptions::ExtractOptionName(RubyString& arg) const {
+    bool ProgramOptions::ExtractOptionName(String& arg) const {
         size_t beginOfFlagName = arg.find_first_not_of('-');
         if (beginOfFlagName == std::string::npos) {
             writeInConsoleF("Failed to find name of option: \"--{}\"\n", arg);
@@ -174,7 +174,7 @@ namespace Ruby {
         }
     }
 
-    bool ProgramOptions::IsOptionExistsInTable(const ProgramOptions::OptionsMapType& map, const RubyString& flag) const {
+    bool ProgramOptions::IsOptionExistsInTable(const ProgramOptions::OptionsMapType& map, const String& flag) const {
         if (map.contains(flag))
             return true;
 
@@ -218,7 +218,7 @@ namespace Ruby {
             case CLI_ARG_BOOL:
                 m_options[opt.longName] = strToBool(arg).value(); break;
             default:    // Always assumes a string
-                m_options[opt.longName] = RubyString{ arg }; break;
+                m_options[opt.longName] = String{ arg }; break;
         }
         return true;
     }

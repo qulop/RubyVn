@@ -5,13 +5,13 @@
 
 
 namespace Ruby {
-    FontTTF::FontTTF(const RubyString& path, u32 height, u32 width) {
+    FontTTF::FontTTF(const String& path, u32 height, u32 width) {
         LoadFontTTF(path);
         SetNewDimensions(height, width);
     }
 
 
-    void FontTTF::LoadFontTTF(const RubyString& path) {
+    void FontTTF::LoadFontTTF(const String& path) {
         if (!m_lib && FT_Init_FreeType(&m_lib)) {
                 RUBY_CRITICAL("FreeType criritcal error: cannot to initialize a library");
                 return;

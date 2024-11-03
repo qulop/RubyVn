@@ -8,12 +8,12 @@
 
 
 namespace Ruby::Details::Assert {
-    RubyString _getAssertionString(const char* expr, const RubyString& msg, std::source_location& loc);
+    String _getAssertionString(const char* expr, const String& msg, std::source_location& loc);
 
     template<typename... Args>
     bool _rubyAssert(const char* expr, std::format_string<Args...> fmt="",
                      std::source_location loc = std::source_location::current(), Args&&... args) {
-        RubyString msg = std::format(std::move(fmt), std::forward<Args>(args)...);
+        String msg = std::format(std::move(fmt), std::forward<Args>(args)...);
         auto res = _getAssertionString(expr, msg, loc);
 
         Platform::writeInConsole(res.c_str());
@@ -25,7 +25,7 @@ namespace Ruby::Details::Assert {
 
     template<typename... Args>
     void _rubyWreck(std::format_string<Args...> fmt, Args&&... args) {
-        RubyString msg = std::format(fmt, std::forward<Args>(args)...);
+        String msg = std::format(fmt, std::forward<Args>(args)...);
 
         Platform::writeInConsole(msg.c_str());
         std::abort();

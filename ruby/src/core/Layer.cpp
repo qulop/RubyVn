@@ -11,11 +11,11 @@ namespace Ruby {
         s_unnamedLayersCounter.fetch_add(1);
     }
 
-    Layer::Layer(const RubyString& name) {
+    Layer::Layer(const String& name) {
         m_name = name;
     }
 
-    RubyString Layer::GetName() const {
+    String Layer::GetName() const {
         return m_name;
     }
 }

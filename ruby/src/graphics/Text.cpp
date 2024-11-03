@@ -26,7 +26,7 @@ namespace Ruby {
         return *this;
     }
 
-    Text& Text::operator=(const RubyString& msg) {
+    Text& Text::operator=(const String& msg) {
         m_text = msg;
 
         return *this;

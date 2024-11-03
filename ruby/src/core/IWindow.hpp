@@ -11,9 +11,9 @@ namespace Ruby {
         virtual void ChangePosition(i32 x, i32 y) const = 0;
         virtual void Resize(i32 width, i32 height) = 0;
         virtual void ToCenter() const = 0;
-        virtual void SetIcon(const RubyString& path) = 0;
-        virtual void SetTitle(const RubyString& title) = 0;
-        virtual void SetInnerCursor(const RubyString& path) = 0;
+        virtual void SetIcon(const String& path) = 0;
+        virtual void SetTitle(const String& title) = 0;
+        virtual void SetInnerCursor(const String& path) = 0;
         virtual void ResetInnerCursor() = 0;
         virtual void PollEvents() = 0;
 

@@ -9,7 +9,7 @@ namespace Ruby::Time {
 
 
     template<typename ClockType = std::chrono::steady_clock>
-    RubyString prettifyDuration(RubyString format, typename ClockType::duration duration) {
+    String prettifyDuration(String format, typename ClockType::duration duration) {
         using namespace std::chrono;
         
         auto hrs = duration_cast<hours>(duration);

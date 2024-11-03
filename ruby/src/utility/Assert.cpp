@@ -3,7 +3,7 @@
 
 
 namespace Ruby::Details::Assert {
-    RubyString _getAssertionString(const char* expr, const RubyString& msg, std::source_location& loc) {
+    String _getAssertionString(const char* expr, const String& msg, std::source_location& loc) {
         auto res = std::format("Assertion failed:\n\t-- Expression: {}\n\t-- File: {}\n\t-- Line: {}\n",
                                expr, loc.file_name(), loc.line());
 

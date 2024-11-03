@@ -32,8 +32,8 @@ namespace Ruby {
         }
     }
 
-    std::optional<RubyString> getField(const char*& str) {
-        RubyString field;
+    std::optional<String> getField(const char*& str) {
+        String field;
         loop {
             char ch = *str;
             RUBY_ASSERT_BASIC(ch);
@@ -60,7 +60,7 @@ namespace Ruby {
         return m_reflector->m_enum.at(m_index).second;
     }
 
-    RubyString EnumField::GetFieldName() const {
+    String EnumField::GetFieldName() const {
         return m_reflector->m_enum.at(m_index).first;
     }
 
@@ -159,11 +159,11 @@ namespace Ruby {
                                      end();
     }
 
-    RubyString EnumReflector::GetName() const {
+    String EnumReflector::GetName() const {
         return m_enumName;
     }
 
-    EnumField EnumReflector::GetByKey(const RubyString& key) const {
+    EnumField EnumReflector::GetByKey(const String& key) const {
         for (i32 i = 0; i < m_enum.size(); i++) {
             const auto& [keyInEnum, _] = m_enum.at(i);
             if (keyInEnum == key)

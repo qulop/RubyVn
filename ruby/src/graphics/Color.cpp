@@ -4,7 +4,7 @@
 
 
 namespace Ruby {
-    glm::vec4 fromHexToRGB(const RubyString& hex) {
+    glm::vec4 fromHexToRGB(const String& hex) {
         RUBY_ASSERT(hex.front() == '#' && hex.size() == 7, "Incorrect string format!");
 
         i32 r = 0, g = 0, b = 0;

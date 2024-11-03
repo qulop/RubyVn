@@ -73,7 +73,7 @@ namespace Ruby {
 
 
 
-    Shader::Shader(const RubyString& vertexPath, const RubyString& fragmentPath) {
+    Shader::Shader(const String& vertexPath, const String& fragmentPath) {
         m_sources[RUBY_VERTEX_SHADER] = std::move(extractTextFromFile(vertexPath));
         m_sources[RUBY_FRAGMENT_SHADER] = std::move(extractTextFromFile(fragmentPath));
     }
@@ -102,11 +102,11 @@ namespace Ruby {
         glUseProgram(0);
     }
 
-    void Shader::AddSource(ShaderTypes type, const RubyString& src) {
+    void Shader::AddSource(ShaderTypes type, const String& src) {
         m_sources[type] = src;
     }
 
-    void Shader::AddFile(ShaderTypes type, const RubyString& path) {
+    void Shader::AddFile(ShaderTypes type, const String& path) {
         m_sources[type] = std::move(extractTextFromFile(path));
     }
 

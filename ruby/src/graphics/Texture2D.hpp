@@ -43,9 +43,9 @@ namespace Ruby {
         using Deleter = std::function<void(u8*)>;
 
         Texture2D() = default;
-        explicit Texture2D(const RubyString& path, TextureParams params={});
+        explicit Texture2D(const String& path, TextureParams params={});
 
-        void LoadByPath(const RubyString& path, TextureParams params={});
+        void LoadByPath(const String& path, TextureParams params={});
         void LoadByBuffer(i32 width, i32 height, u8* buffer, TextureParams params={});
 
         void AddDeleter(const Deleter& deleter);

@@ -6,7 +6,7 @@
 
 
 namespace Ruby {
-    glm::vec4 fromHexToRGB(const RubyString& hex);
+    glm::vec4 fromHexToRGB(const String& hex);
 
     template<typename Tx>
     static constexpr Tx getMaxValueForColor() noexcept {
@@ -24,7 +24,7 @@ namespace Ruby {
             m_color(color)
         {}
 
-        Color(const RubyString& hex) : // NOLINT
+        Color(const String& hex) : // NOLINT
                 m_color(fromHexToRGB(hex))
         {
             m_color.r /= 255;

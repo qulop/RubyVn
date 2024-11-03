@@ -29,7 +29,7 @@ namespace Ruby {
         extern const char* defaultFileName;
         extern const char* defaultLoggerName;
 
-        void destroyAppWithErrorBox(const RubyString& msg);
+        void destroyAppWithErrorBox(const String& msg);
 
         template<typename... Args>
         void critical(spdlog::format_string_t<Args...> format, Args&&... args) {
@@ -55,7 +55,7 @@ namespace Ruby {
         using LoggerPtr = SharedPtr<Details::LoggerDetails::VendorLogger>;
 
     public:
-        static void Init(RubyPath loggerPath,
+        static void Init(Path loggerPath,
                        const char* fileName = Details::LoggerDetails::defaultFileName,
                        const char* coreName = Details::LoggerDetails::defaultLoggerName);
 

@@ -12,9 +12,9 @@
 #define RUBY_NORETURN                   [[noreturn]]
 
 #ifdef _NDEBUG            
-    #define LOG_LEVEL                   spdlog::level::info
+    #define RUBY_LOG_LEVEL                   spdlog::level::info
 #else
-    #define LOG_LEVEL                   spdlog::level::debug
+    #define RUBY_LOG_LEVEL                   spdlog::level::debug
 #endif
 
 #if defined(RUBY_MSVC_USED)

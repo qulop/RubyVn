@@ -15,7 +15,7 @@ namespace Ruby {
         void AddVBO(const VertexBuffer& vbo);
         void SetEBO(const IndexBuffer& ebo);
 
-        RUBY_NODISCARD const RubyVector<VertexBuffer>& GetVBO() const;
+        RUBY_NODISCARD const Vector<VertexBuffer>& GetVBO() const;
         RUBY_NODISCARD IndexBuffer GetEBO() const;
 
         ~VertexArray();
@@ -23,7 +23,7 @@ namespace Ruby {
     private:
         u32 m_id = RUBY_UNDEFINED_ID;
 
-        RubyVector<VertexBuffer> m_vertexBuffers;
+        Vector<VertexBuffer> m_vertexBuffers;
         IndexBuffer m_ebo;
     };
 }

@@ -6,12 +6,12 @@
 
 namespace Ruby {
     class EnumReflector {
-        using EnumType = RubyVector<std::pair<RubyString, i32>>;
+        using EnumType = Vector<std::pair<String, i32>>;
     public:
         class EnumField {
         public:
             RUBY_NODISCARD i32 GetValue() const;
-            RUBY_NODISCARD RubyString GetFieldName() const;
+            RUBY_NODISCARD String GetFieldName() const;
             RUBY_NODISCARD i32 GetIndex() const;
             EnumReflector& GetReflector();
 
@@ -50,9 +50,9 @@ namespace Ruby {
 
         RUBY_NODISCARD size_t Size() const;
 
-        RUBY_NODISCARD RubyString GetName() const;
+        RUBY_NODISCARD String GetName() const;
 
-        RUBY_NODISCARD EnumField GetByKey(const RubyString& key) const;
+        RUBY_NODISCARD EnumField GetByKey(const String& key) const;
         RUBY_NODISCARD EnumField GetByValue(i32 value) const;
 
         RUBY_NODISCARD EnumField At(i32 i) const;
@@ -65,7 +65,7 @@ namespace Ruby {
         
     private:
         EnumType m_enum;
-        RubyString m_enumName;
+        String m_enumName;
     };
 }
 

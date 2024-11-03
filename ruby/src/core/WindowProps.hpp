@@ -27,7 +27,7 @@ namespace Ruby {
 
 
     struct RUBY_API VideoStruct {
-        RubyString title = "RubyEngine application";
+        String title = "RubyEngine application";
         i32 width = 0;
         i32 height = 0;
         bool isFullScreened = false;
@@ -45,7 +45,7 @@ namespace Ruby {
             *this = other;
         }
 
-        VideoStruct(RubyString&& title, i32 width, i32 height) :
+        VideoStruct(String&& title, i32 width, i32 height) :
             title(std::move(title)), width(width), height(height)
         {}
 

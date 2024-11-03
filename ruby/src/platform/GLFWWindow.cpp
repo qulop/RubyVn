@@ -39,7 +39,7 @@ namespace Ruby {
     }
 
 
-    void GLFWWindow::SetIcon(const RubyString& path) {
+    void GLFWWindow::SetIcon(const String& path) {
         Texture2D texture{ path };
 
         GLFWimage ico {
@@ -51,12 +51,12 @@ namespace Ruby {
     }
 
 
-    void GLFWWindow::SetTitle(const RubyString& title) {
+    void GLFWWindow::SetTitle(const String& title) {
         glfwSetWindowTitle(m_window, title.c_str());
     }
 
 
-    void GLFWWindow::SetInnerCursor(const RubyString& path) {
+    void GLFWWindow::SetInnerCursor(const String& path) {
         Texture2D texture{ path };
 
         GLFWimage cur {
@@ -112,6 +112,8 @@ namespace Ruby {
 
 
 	GLFWWindow::~GLFWWindow() {
+         auto& m = EventManager::GetInstance();
+
         EventManager::GetInstance().Clear();
         
         glfwDestroyWindow(m_window); 

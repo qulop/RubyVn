@@ -6,7 +6,7 @@ namespace Ruby {
     }
 
 
-    RubyString getParentPath(const RubyString& path) {
+    String getParentPath(const String& path) {
         std::filesystem::path fsPath{ path };
 
         return fsPath.parent_path().string();
@@ -19,7 +19,7 @@ namespace Ruby {
             maxFPS = std::any_cast<i32>(opts.GetArgumentOfOption("max-fps"));
 
         if (opts.HasOption("log-directory"))
-            loggerBaseDirectory = std::any_cast<RubyString>(opts.GetArgumentOfOption("log-directory"));
+            loggerBaseDirectory = std::any_cast<String>(opts.GetArgumentOfOption("log-directory"));
         else
             loggerBaseDirectory = std::move(getParentPath(opts.GetAppPath()));
 

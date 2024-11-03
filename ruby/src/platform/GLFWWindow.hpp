@@ -12,9 +12,9 @@ namespace Ruby {
         void ChangePosition(i32 x, i32 y) const override;
         void Resize(i32 width, i32 height) override;
         void ToCenter() const override;
-        void SetIcon(const RubyString& path) override;
-        void SetTitle(const RubyString& title) override;
-        void SetInnerCursor(const RubyString& path) override;
+        void SetIcon(const String& path) override;
+        void SetTitle(const String& title) override;
+        void SetInnerCursor(const String& path) override;
         void ResetInnerCursor() override;
         void PollEvents() override;
 

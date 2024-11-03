@@ -14,8 +14,8 @@ namespace Ruby {
         const f32 timestep = 1000.0f / static_cast<f32>(maxFPS);
         const u16 interval = 1; // time step after how long fps will be calculated
 
-        RubyString applicationDirectory; // Path to the directory where the engine executable is located
-        RubyString loggerBaseDirectory; // Location(path) of logger's directory 
+        String applicationDirectory; // Path to the directory where the engine executable is located
+        String loggerBaseDirectory; // Location(path) of logger's directory 
         
         VideoStruct videoConfig;
 

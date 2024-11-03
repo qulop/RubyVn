@@ -17,7 +17,7 @@ namespace Ruby {
     class RUBY_API Shader {
     public:
         Shader() = default;
-        Shader(const RubyString& vertexPath, const RubyString& fragmentPath);
+        Shader(const String& vertexPath, const String& fragmentPath);
 
         RUBY_NODISCARD std::string_view GetSource(ShaderTypes type) const;
         RUBY_NODISCARD u32 GetShaderID(ShaderTypes type) const;
@@ -27,8 +27,8 @@ namespace Ruby {
         void Bind() const;
         void Unbind() const;
 
-        void AddSource(ShaderTypes type, const RubyString& src);
-        void AddFile(ShaderTypes type, const RubyString& path);
+        void AddSource(ShaderTypes type, const String& src);
+        void AddFile(ShaderTypes type, const String& path);
 
         RUBY_NODISCARD bool IsEmpty() const;
         RUBY_NODISCARD bool IsReady() const;
@@ -55,8 +55,8 @@ namespace Ruby {
         u32 CompileShader(ShaderTypes type, const char* source);
 
     private:
-        RubyHashMap<ShaderTypes, u32> m_shadersId;
-        RubyHashMap<ShaderTypes, RubyString> m_sources;
+        HashMap<ShaderTypes, u32> m_shadersId;
+        HashMap<ShaderTypes, String> m_sources;
 
         u32 m_programId = RUBY_UNDEFINED_ID;
         std::atomic<bool> m_isReady = false;

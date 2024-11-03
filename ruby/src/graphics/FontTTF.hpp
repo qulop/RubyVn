@@ -28,10 +28,10 @@ namespace Ruby {
         using Path = std::filesystem::path;
     public:
         FontTTF() = default;
-        FontTTF(const RubyString& path, u32 height=50, u32 width=0); // If width set to 0 FreeType will automaticaly calculate the width,
+        FontTTF(const String& path, u32 height=50, u32 width=0); // If width set to 0 FreeType will automaticaly calculate the width,
                                                                   // based on given height
 
-        void LoadFontTTF(const RubyString& name);
+        void LoadFontTTF(const String& name);
 
         void SetNewDimensions(u32 height, u32 width);
  
@@ -50,11 +50,11 @@ namespace Ruby {
         bool FetchSystemFontTTF(const Path& name) const;
 
     private:
-        RubyHashMap<char, Glyph> m_chars;
-        RubyString m_FontTTFFamily;
+        HashMap<char, Glyph> m_chars;
+        String m_FontTTFFamily;
 
         FT_Library m_lib = nullptr;
-        RubyVector<FT_Face> m_styles;
+        Vector<FT_Face> m_styles;
         FT_Face m_face = nullptr;
     };
 }

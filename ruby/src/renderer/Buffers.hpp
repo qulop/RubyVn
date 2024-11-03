@@ -37,7 +37,7 @@ namespace Ruby {
                 return m_stride;
             }
 
-            RUBY_NODISCARD const RubyVector<ElementType>& GetElements() const {
+            RUBY_NODISCARD const Vector<ElementType>& GetElements() const {
                 return m_elements;
             }
 
@@ -45,7 +45,7 @@ namespace Ruby {
             void CalculateStrideAndOffset();
 
         private:
-            RubyVector<ElementType> m_elements;
+            Vector<ElementType> m_elements;
             i32 m_stride = 0;
         };
     }

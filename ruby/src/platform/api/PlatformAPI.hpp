@@ -16,10 +16,10 @@ namespace Ruby::Platform {
     // <width> as "std::pair::first", and <height> as "std::pair::second"
     std::pair<i32, i32> getScreenResolution() noexcept;
 
-    void errorBox(const RubyString& msg, const RubyString& title) noexcept;
-    void infoBox(const RubyString& msg, const RubyString& title) noexcept;
+    void errorBox(const String& msg, const String& title) noexcept;
+    void infoBox(const String& msg, const String& title) noexcept;
 
-    void writeInConsole(const RubyString& msg, bool isFlush=true);
+    void writeInConsole(const String& msg, bool isFlush=true);
 
     LocaleInfo getSystemLocaleInfo();
 

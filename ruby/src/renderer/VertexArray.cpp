@@ -113,7 +113,7 @@ namespace Ruby {
     }
 
 
-    const RubyVector<VertexBuffer>& VertexArray::GetVBO() const {
+    const Vector<VertexBuffer>& VertexArray::GetVBO() const {
         return m_vertexBuffers;
     }
 

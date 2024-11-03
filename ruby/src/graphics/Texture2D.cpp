@@ -4,12 +4,12 @@
 
 
 namespace Ruby {
-    Texture2D::Texture2D(const RubyString& path, TextureParams params) { 
+    Texture2D::Texture2D(const String& path, TextureParams params) { 
         LoadByPath(path, params); 
     }
 
 
-    void Texture2D::LoadByPath(const RubyString& path, TextureParams params) {
+    void Texture2D::LoadByPath(const String& path, TextureParams params) {
         i32 channels = 0;
         m_data = stbi_load(path.c_str(), &m_width, &m_height, &channels, params.imageFormat);
         if (!m_data) {
