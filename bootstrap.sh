@@ -36,7 +36,7 @@ invoke_setup() {
     fi
     echo "Installing the required libraries from requirements.txt..."
     ./venv/Scripts/pip3 install -r requirements.txt
-    ./venv/Scripts/python setup.py
+    ./venv/Scripts/python main.py
     deactivate
     cd ../
 }

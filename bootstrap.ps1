@@ -6,6 +6,7 @@ function Get-Confirmation() {
     Write-Output -NoNewline $prompt
     while ($true) {
         $res = Read-Host
+        $res.ToLower()
 
         if ($res -eq "no" -or $res -eq "n") {
             return $false
@@ -28,6 +29,8 @@ function Enter-Venv() {
 
 function Invoke-Setup() {
     Write-Output "Trying to create virtual enviroment..."
+
+    Set-Location -Path "scripts/"
     try {
         Enter-Venv
     }
@@ -44,14 +47,13 @@ function Invoke-Setup() {
     Write-Output "Installing the required libraries from requirements.txt..."
     .\venv\Scripts\pip3.exe install -r requirements.txt
 
-    .\venv\Scripts\python .\setup.py
+    .\venv\Scripts\python.exe main.py
     deactivate
     Set-Location -Path "../"
 }
 
 
 
-Set-Location -Path "scripts/"
 $is_python = Get-Command python3 -ErrorAction SilentlyContinue
 if ($is_python) {
     Invoke-Setup
