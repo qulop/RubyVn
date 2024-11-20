@@ -5,48 +5,12 @@
 #include <glad/glad.h>
 #include <utility/Assert.hpp>
 
+#include "RendererAPI.hpp"
+
+
 
 namespace Ruby {
-    void initRendererAPI() {
-
-    }
-
-    void setViewport(u32 x, u32 y, u32 width, u32 height) {
-        glViewport(x, y, width, height);
-    }
-
-    void clearBuffers() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void clearColor(const Color& color) {
-        glClearColor(color.Red(), color.Green(), color.Blue(), color.Alpha());
-    }
-
-    void clearColor(f32 r, f32 g, f32 b, f32 a) {
-        glClearColor(r, g, b, a);
-    }
-
-    void drawIndexed(const VertexArray& vao, u32 indexCount) {
-        if (!indexCount)
-            indexCount = static_cast<u32>(vao.GetEBO().GetCount());
-
-        vao.Bind();
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-    }
-
-    void drawLines(const VertexArray& vao, u32 vertexCount){
-        vao.Bind();
-        glDrawArrays(GL_LINE, 0, vertexCount);
-    }
-
-    void setLineWidth(f32 width) {
-        glLineWidth(width);
-    }
-
-
     void Renderer::Init() {
-        initRendererAPI();
 
     }
 

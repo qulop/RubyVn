@@ -9,6 +9,7 @@
 #include "../ruby/src/renderer/Shader.cpp"
 
 #include "../ruby/src/renderer/Renderer.cpp"
+#include "../ruby/src/renderer/RendererAPI.cpp"
 
 #ifdef RUBY_MSVC_USED
     #pragma warning(pop)
