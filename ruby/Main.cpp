@@ -1,4 +1,7 @@
-#include <types/Threading.hpp>
+#ifdef RUBY_RELEASE_BUILD
+    #define _NDEBUG
+#endif
+
 #include "src/RubyEngine.hpp"
 #ifdef RUBY_DEBUG_BUILD
     #include "tests/cases/TestCases.hpp"
@@ -39,17 +42,14 @@ i32 main(int argc, char** argv) {
             return RUBY_RUN_ALL_TESTS(options);
     #endif
 
-    Ruby::Threading::Create(2);
-
     auto& app = Application::GetInstance();
     app.InitApplication(std::move(options));
 
     if (!app.IsInitialized()) {
-        Platform::writeInConsole("Failed to initialize application (╥﹏╥)");
+        Platform::writeInConsole("Failed to initialize an application (╥﹏╥)");
         return EXIT_FAILURE;
     }
 
     app.StartApplication();
-
     return EXIT_SUCCESS;
 }
