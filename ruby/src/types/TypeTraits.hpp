@@ -23,6 +23,20 @@ namespace Ruby {
         template<typename Fn, typename... Args>
         concept Callable = Traits::IsInvocable<Fn, Args...>::val;
 
+        template<typename Tx>
+        concept CString = std::same_as<std::remove_cv_t<Tx>, char*> || 
+                                std::same_as<std::remove_cv_t<Tx>, wchar_t*>;
+
+        template<typename Tx>
+        concept ImplementsEqualityOp = requires(Tx a, Tx b) {
+            { a == b } -> std::convertible_to<bool>;
+        };
+
+        template<typename Tx>
+        concept ImplementsInequalityOp = requires(Tx a, Tx b) {
+            { a != b } -> std::convertible_to<bool>;
+        };
+
 
         template<typename Tx>
         concept STLContainterLike = true;
@@ -45,6 +59,9 @@ namespace Ruby {
     template<typename Tx>
     using Opt                               = std::optional<Tx>;
 
+    using NullOptType                       = std::nullopt_t;
+    constexpr inline NullOptType nullopt    = std::nullopt;
+
     using u8                                = uint8_t;
     using u16                               = uint16_t;
     using u32                               = uint32_t;
@@ -59,4 +76,22 @@ namespace Ruby {
     using f64                               = double;
 
     using byte                              = u8;
+
+
+    
+    template<typename Tx, typename... Args>
+    SharedPtr<Tx> makeShared(Args&&... args) {
+        return std::make_shared<Tx>(std::forward<Args>(args)...);
+    }
+
+    template<typename Tx, typename Deleter>
+    SharedPtr<Tx> makeShared(Tx* ptr, Deleter&& deleter) {
+        auto ret = SharedPtr<Tx>{ ptr, std::forward<Deleter>(deleter) };
+        return ret;
+    }
+
+    template<typename Tx>
+    SharedPtr<Tx> makeShared(size_t size) {
+        return std::make_shared<Tx>(size);
+    }
 }

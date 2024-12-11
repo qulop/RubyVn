@@ -1,38 +1,46 @@
 #pragma once
 
-#include "Definitions.hpp"
 #include <types/TypeTraits.hpp>
 #include <types/Singleton.hpp>
+#include <types/Logger.hpp>
+
+#include "Definitions.hpp"
 #include "Enum.hpp"
 
 
 namespace Ruby {
-    String extractTextFromFile(std::string_view path);
-    Opt<bool> strToBool(const char* str);
+      RUBY_FORCEINLINE FILE* openFile(const char* path, const char* mode, bool abortOnError=true) {
+        FILE* file = nullptr;
+        if (!fopen_s(&file, path, mode))
+            return file;
 
+        if (abortOnError)
+            RUBY_CRITICAL("openFile() : Failed to open file \"{}\"", path);
 
-    template<typename IntegralType = i32>
-    Opt<IntegralType> strToInt(const char* str) {
-        int val = 0;
-        auto res = std::from_chars(str, str + std::strlen(str), val);
-
-        if (res.ec != std::errc{})
-            return std::nullopt;
-        return val;
+        RUBY_ERROR("openFile() : Failed to open file \"{}\". abortOnError = false", path);
     }
 
-    template<typename Tx, typename... Args>
-    SharedPtr<Tx> makeShared(Args&&... args) {
-        return std::make_shared<Tx>(std::forward<Args>(args)...);
-    }
+    inline String extractTextFromFile(std::string_view path) {
+        FILE* file = openFile(path.data(), "rb");
 
-    template<typename Tx>
-    SharedPtr<Tx> makeShared(size_t size) {
-        return std::make_shared<Tx>(size);
-    }
+        fseek(file, 0, SEEK_END);
+        auto fsize = ftell(file);
+        rewind(file);
 
-    template<typename Tx, typename SharedPtr>
-    Tx* isInstanceOf(SharedPtr* ptr) {
-        return dynamic_cast<Tx*>(ptr);
+        byte* buffer = new(std::nothrow) byte[fsize + 1];
+        if (!buffer) {
+            RUBY_ERROR("extractDataFromFile() : Failed to allocate memory for buffer");
+            return String{ "" };
+        }
+
+        auto bytesRead = fread(buffer, sizeof(byte), fsize, file);
+        if (bytesRead != fsize)
+            RUBY_CRITICAL("extractDataFromFile() : failed to read all necessary bytes from file \"{}\" (bytes read: {}, expected: {})",
+                          path, bytesRead, fsize);
+        fclose(file);
+
+        buffer[fsize] = '\0';
+
+        return String { (char*)buffer };
     }
 }
