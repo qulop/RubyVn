@@ -38,18 +38,40 @@ namespace Ruby {
     }
 
     /* Knuth-Morris-Pratt algorithm
-        Time complexity: O()
-        Space complexity: O(n) */
-    inline i64 findSubString(std::string_view haystack, std::string_view needle) {
-        i64 index = RUBY_BAD_INDEX;
-        auto&& prefixes = std::move(getPrefixVector(haystack));
+        Time complexity: O(n + m)
+        Space complexity: O(m) */
+    inline i64 findSubStringKMP(std::string_view haystack, std::string_view needle) {
+        if (needle.empty() || haystack.empty())
+            return RUBY_BAD_INDEX;
 
+        auto needlePrefixes = std::move(getPrefixVector(needle));
+        i64 index = RUBY_BAD_INDEX;
+        size_t j = 0;
+
+        for (size_t i = 0; i < haystack.size(); i++) {
+            while (j > 0 && haystack.at(i) != needle.at(j))
+                j = needlePrefixes.at(j - 1);
+
+            if (haystack.at(i) == needle.at(j))
+                j += 1;
+
+            if (j == needle.size()) {
+                index = (i - needle.size()) + 1;
+                break;
+            }
+        }
 
         return index;
     }
 
-    /* Time complexity: O((to - from) / step)
-       Space complexity: O((to - from) / step) */
+
+    /* findSubStringKMP works under the hood */
+    inline i64 findSubString(std::string_view haystack, std::string_view needle) {
+        return findSubStringKMP(haystack, needle);
+    }
+
+    /* Time complexity: O((to - from) / step) -> O(n)
+       Space complexity: O((to - from) / step) -> O(n) */
     inline String createStringSlice(std::string_view src, size_t from, size_t to, size_t step=1) {
         RUBY_ASSERT_BASIC(to <= src.size());
         if (step == 0)
