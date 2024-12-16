@@ -1,37 +1,32 @@
 #pragma once
 
-#include <types/StdInc.hpp>
 #include <utility/Definitions.hpp>
+#include <types/StdInc.hpp>
 
 
 namespace Ruby::Platform {
-    using threadproc_t = unsigned long(*)(void*);
+    class Locale {
+    public:
+        struct LocaleInfo {
+            WideString systemLocale;
+            WideString systemEncoding;
+        };
 
-    struct LocaleInfo {
-        std::wstring_view systemLocale;
-        std::wstring_view systemEncoding;
+    public:
+        static LocaleInfo GetSystemLocaleInfo(); // Will return struct, which contains `system locale` and `system encoding`
+        static Opt<WideString> GetSystemLocale();
+        static Opt<WideString> GetSystemEncoding();
     };
 
-
-    // <width> as "std::pair::first", and <height> as "std::pair::second"
+    // `width` as `std::pair::first`, and `height` as `std::pair::second`
     std::pair<i32, i32> getScreenResolution() noexcept;
 
-    void errorBox(const String& msg, const String& title) noexcept;
-    void infoBox(const String& msg, const String& title) noexcept;
+    void errorBox(std::string_view msg, std::string_view title) noexcept;
+    void infoBox(std::string_view msg, std::string_view title) noexcept;
 
-    void writeInConsole(const String& msg, bool isFlush=true);
+    void writeInConsole(std::string_view msg, bool isFlush=true);
 
-    LocaleInfo getSystemLocaleInfo();
-
-    SharedPtr<wchar_t> getSystemLocale();
-    SharedPtr<wchar_t> getSystemEncoding();
 
     void* virtualAlloc(size_t size);
     void virtualFree(void* address, size_t size=0);
-
-    void* createThread(threadproc_t procedure, void* arg, size_t stackSize=0, bool suspended=false, unsigned long* threadId=nullptr);
-    bool suspendThread(void* thread);
-    bool resumeThread(void* thread);
-    bool terminateThread(void* thread, unsigned long reason = EXIT_SUCCESS);
-    bool setThreadPriority(void* thread, i32 priority);
 }
