@@ -1,55 +1,93 @@
-#include "ProgramOptions.hpp"
-#include "RubyUtility.hpp"
+#include <platform/Platform.hpp>    // Logger doesn't initialize at this moment, so we need to use writeInConsoleF() or Platform::writeInConsole()
 
-#include <utility/Assert.hpp>
-#include <platform/Platform.hpp>
-#include <types/Logger.hpp>
+#include "ProgramOptions.hpp"
+#include "Assert.hpp"
+#include "Cast.hpp"
 
 
 namespace Ruby {
-    OptionArgumentType deduceTypeOfArgument(const char* arg) {
+    static std::string_view argTypeToStringView(OptionArgType type) {
+        switch (type) {
+            case OptionArgType::INT:
+                return "int";
+            case OptionArgType::BOOL:
+                return "bool";
+            case OptionArgType::STRING:
+                return "string";
+            default:
+                return "none";
+        }
+    }
+
+    static OptionArgType getArgumentType(const char* arg) {
+        RUBY_ASSERT_BASIC(arg && !ProgramOptions::IsFlag(arg));
+
         if (std::strcmp(arg, "true") == 0 || std::strcmp(arg, "false") == 0)
-            return CLI_ARG_BOOL;
+            return OptionArgType::BOOL;
         else if (strToInt<i32>(arg).has_value())
-            return CLI_ARG_INT;
-        return CLI_ARG_STRING;
+            return OptionArgType::INT;
+        return OptionArgType::STRING;
+    }
+
+    static bool checkTypeOfArgument(const CmdLineOption& opt, const char* arg) {
+        if (!arg || ProgramOptions::IsFlag(arg)) {
+            writeInConsoleF("Missing argument for option \"--{}\"\n",
+               opt.longName);
+            return false;
+        }
+
+        if (auto deducedType = getArgumentType(arg); deducedType != opt.type) {
+            writeInConsoleF("Option \"--{}\" expects argument of type \"{}\", but gets \"{}\"\n",
+                opt.longName,
+                argTypeToStringView(opt.type),
+                argTypeToStringView(deducedType)
+            );
+            return false;
+        }
+
+        return true;
     }
 
 
 
     ProgramOptions::ProgramOptions(i32 argc, char** argv, std::initializer_list<CmdLineOption> opts) :
-            m_argc(argc),
+            m_argc(argc - 1),   // Excluding first argument(application path)
             m_appPath(argv[0])
     {
         std::lock_guard<std::mutex> guard{ m_parseMutex };
 
         CopyRawOptions(argv);
-        RUBY_ASSERT_BASIC(m_argv != nullptr);
+        if (!m_argv) {
+            return;
+        }
 
-        bool hasError = false;
-        OptionsMapType optionsMap = std::move(CreateTableOfMandatoryOptions(opts.begin(), opts.end()));
-        
-        for (auto tokenIndex = 0; tokenIndex < (m_argc - 1); tokenIndex++) {
+        auto mandatoryOptionsTable = std::move(CreateTableOfMandatoryOptions(opts.begin(), opts.end()));
+        for (size_t tokenIndex = 0; tokenIndex < m_argc; tokenIndex++) {
             String token = At(tokenIndex);
 
-            if (!IsFlag(token.c_str())) {
+            if (!IsFlag(token)) {
                 writeInConsoleF("Argument doesn't apply to any flag: \"{}\"\n", token);
                 continue;
             }
 
-            bool hasErrorOnIteration = (!ExtractOptionName(token)
-                    || !IsOptionExistsInTable(optionsMap, token)
-                    || !ParseArgumentForOption(optionsMap.at(token), At(tokenIndex + 1)));
+            if (!ExtractOptionName(token) || !IsOptionExistsInTable(mandatoryOptionsTable, token)) {
+                AbortParse();
+                return;
+            }
 
-            if (hasErrorOnIteration) {
-                hasError = true;
+            const auto& option = mandatoryOptionsTable.at(token);
+            if (option.type == OptionArgType::NONE) {
+                m_options[option.longName] = std::monostate{};
                 continue;
             }
-            tokenIndex += (optionsMap.at(token).type == CLI_ARG_NONE) ? 0 : 1;
-        }
 
-        if (hasError)
-            return;
+            tokenIndex += 1;
+            const char* argument = (tokenIndex < m_argc) ? At(tokenIndex) : nullptr;
+            if (!ParseArgument(option, argument)) {
+                AbortParse();
+                return;
+            }
+        }
 
         AddRemainingRequiredOptions(opts.begin(), opts.end());
         m_isParseProcessed.exchange(true);
@@ -67,8 +105,12 @@ namespace Ruby {
         return m_isParseProcessed.load();
     }
 
-    bool ProgramOptions::IsFlag(const char* arg) {
-        return (arg != nullptr && arg[0] == '-');
+    bool ProgramOptions::IsFlag(std::string_view arg) {
+        if (arg.empty()) {
+            return false;
+        }
+
+        return (arg.size() > 2 && arg.starts_with("--")) || (arg.size() > 1 && arg.starts_with("-"));
     }
 
     char* ProgramOptions::At(size_t i) {
@@ -86,8 +128,9 @@ namespace Ruby {
     }
 
     std::any ProgramOptions::GetArgumentOfOption(const String& opt) const {
-        if (!HasOption(opt) || std::holds_alternative<std::monostate>(m_options.at(opt)))
+        if (!HasOption(opt) || std::holds_alternative<std::monostate>(m_options.at(opt))) {
             return std::any{};
+        }
 
         auto variantGetter = [](const auto& val) -> std::any {
             return std::make_any<std::decay_t<decltype(val)>>(val);
@@ -110,8 +153,9 @@ namespace Ruby {
 
 
     ProgramOptions& ProgramOptions::operator=(const ProgramOptions& other) {
-        if (this == &other)
+        if (this == &other) {
             return *this;
+        }
 
         m_argc = other.m_argc;
         m_appPath = other.m_appPath;
@@ -123,8 +167,9 @@ namespace Ruby {
     }
 
     ProgramOptions& ProgramOptions::operator=(ProgramOptions&& other) noexcept {
-        if (this == &other)
+        if (this == &other) {
             return *this;
+        }
 
         m_argc = std::exchange(other.m_argc, 0);
         m_argv = std::exchange(other.m_argv, nullptr);
@@ -142,21 +187,28 @@ namespace Ruby {
 
 
     void ProgramOptions::CopyRawOptions(char** args) {
-        m_argv = new char*[m_argc];  // content of m_argv(without path) + nullptr limiter
+        RUBY_ASSERT_BASIC(args != nullptr);
 
-        for (auto i = 1; i < m_argc; i++) {
+        i32 argc = m_argc + 1;
+        m_argv = new(std::nothrow) char*[argc];  // content of args(without path) + nullptr limiter
+        if (!m_argv) {
+            writeInConsoleF("Failed to allocate memory for the m_argv");
+            return;
+        }
+
+        for (auto i = 1; i < argc; i++) {
             size_t len = std::strlen(args[i]) + 1;
             m_argv[i-1] = new char[len];
             strcpy_s(m_argv[i-1], len, args[i]);
         }
 
-        m_argv[m_argc - 1] = nullptr;
+        m_argv[argc - 1] = nullptr;
     }
 
     bool ProgramOptions::ExtractOptionName(String& arg) const {
         size_t beginOfFlagName = arg.find_first_not_of('-');
-        if (beginOfFlagName == std::string::npos) {
-            writeInConsoleF("Failed to find name of option: \"--{}\"\n", arg);
+        if (beginOfFlagName == String::npos) {
+            writeInConsoleF("Failed to find name of option: \"{}\"\n", arg);
             return false;
         }
 
@@ -164,7 +216,7 @@ namespace Ruby {
         return true;
     }
 
-    void ProgramOptions::AddRemainingRequiredOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end) {
+    void ProgramOptions::AddRemainingRequiredOptions(auto begin, auto end) {
         for (auto opt = begin; opt != end; opt++) {
             bool isDefaultValueExists = !std::holds_alternative<std::monostate>(opt->defaultValue);
 
@@ -174,52 +226,44 @@ namespace Ruby {
         }
     }
 
-    bool ProgramOptions::IsOptionExistsInTable(const ProgramOptions::OptionsMapType& map, const String& flag) const {
-        if (map.contains(flag))
+    bool ProgramOptions::IsOptionExistsInTable(const ProgramOptions::OptionsMapType& mandatoryOptionsTable, const String& flag) const {
+        if (mandatoryOptionsTable.contains(flag)) {
             return true;
+        }
 
-        writeInConsoleF("Unknown option is found - \"--{}\"\n", flag);
+        writeInConsoleF("Unknown option is found: \"{}\"\n", flag);
         return false;
     }
 
-    ProgramOptions::OptionsMapType ProgramOptions::CreateTableOfMandatoryOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end) const {
-        OptionsMapType ret;
-        for (auto opt = begin; opt != end; opt++)
-            ret[opt->longName] = *opt;
+    bool ProgramOptions::ParseArgument(const CmdLineOption& option, const char* argument) {
+        if (!checkTypeOfArgument(option, argument)) {
+            return false;
+        }
 
-        return ret;
+        switch (option.type) {
+            case OptionArgType::INT:
+                m_options[option.longName] = strToInt<i32>(argument).value(); break;
+            case OptionArgType::BOOL:
+                m_options[option.longName] = strToBool(argument).value(); break;
+            case OptionArgType::STRING:
+                m_options[option.longName] = argument; break;
+            default:
+                RUBY_WRECK("Default case was reached, but it was not intended");
+        }
+
+        return true;
     }
 
-    bool ProgramOptions::ParseArgumentForOption(const CmdLineOption& opt, const char* arg) {
-        if (opt.type == CLI_ARG_NONE) {
-            m_options[opt.longName] = std::monostate{};
-            return true;
+    void ProgramOptions::AbortParse() {
+        auto tmp = std::move(*this);    // Will reset all fields of this object
+    }   // Here m_argv will be deleted in the destructor
+
+    ProgramOptions::OptionsMapType ProgramOptions::CreateTableOfMandatoryOptions(auto begin, auto end) const {
+        OptionsMapType ret;
+        for (auto opt = begin; opt != end; opt++) {
+            ret[opt->longName] = *opt;
         }
 
-        if (!arg || IsFlag(arg)) {
-            writeInConsoleF("Missing argument for option \"--{}\"\n",
-               opt.longName);
-            return false;
-        }
-
-        if (auto argType = deduceTypeOfArgument(arg); argType != opt.type) {
-            auto&& reflector = EnumReflector::Create<OptionArgumentType>();
-
-            writeInConsoleF("Option \"--{}\" expects argument of type {}, but gets {}\n",
-               opt.longName,
-               reflector.GetByValue(opt.type).GetFieldName(),
-               reflector.GetByValue(argType).GetFieldName());
-            return false;
-        }
-
-        switch (opt.type) {
-            case CLI_ARG_INT:
-                m_options[opt.longName] = strToInt<i32>(arg).value(); break;
-            case CLI_ARG_BOOL:
-                m_options[opt.longName] = strToBool(arg).value(); break;
-            default:    // Always assumes a string
-                m_options[opt.longName] = String{ arg }; break;
-        }
-        return true;
+        return ret;
     }
 }

@@ -16,31 +16,31 @@ namespace Ruby {
     }
 
 
-    RUBY_ENUM(OptionArgumentType,
-        CLI_ARG_NONE,
-        CLI_ARG_INT, CLI_ARG_BOOL,
-        CLI_ARG_STRING
-    );
+    enum class OptionArgType {
+        NONE,
+        INT, BOOL,
+        STRING
+    };
 
 
     struct CmdLineOption {
         using ArgumentType = std::variant<std::monostate, i32, bool, String>;
 
         String longName;
-        OptionArgumentType type = CLI_ARG_STRING;
+        OptionArgType type = OptionArgType::STRING;
         ArgumentType defaultValue;
 
 
         CmdLineOption() = default;
 
         template<Details::ProgramOptions::AllowedArgumentType Tx>
-        CmdLineOption(String longName, OptionArgumentType type, Tx defaultValue) :
+        CmdLineOption(String longName, OptionArgType type, Tx defaultValue) :
             longName(std::move(longName)),
             type(type),
             defaultValue(std::move(defaultValue))
         {}
 
-        CmdLineOption(String longName, OptionArgumentType type) :
+        CmdLineOption(String longName, OptionArgType type) :
             longName(std::move(longName)),
             type(type)
         {}
@@ -49,10 +49,9 @@ namespace Ruby {
 
     class RUBY_API ProgramOptions {
         using OptionsMapType = HashMap<String, CmdLineOption>;
-        using InitalizerListConstIterator = typename std::initializer_list<CmdLineOption>::const_iterator;
 
     public:
-        static bool IsFlag(const char* arg);
+        static bool IsFlag(std::string_view arg);
 
     public:
         ProgramOptions() = default;
@@ -82,16 +81,18 @@ namespace Ruby {
         void CopyRawOptions(char** argv);
 
         RUBY_NODISCARD bool ExtractOptionName(String& arg) const;
-
-        void AddRemainingRequiredOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end);
-
         RUBY_NODISCARD bool IsOptionExistsInTable(const OptionsMapType& map, const String& flag) const;
-        OptionsMapType CreateTableOfMandatoryOptions(InitalizerListConstIterator begin, InitalizerListConstIterator end) const;
-        bool ParseArgumentForOption(const CmdLineOption& opt, const char* arg);
+        RUBY_NODISCARD bool ParseArgument(const CmdLineOption& option, const char* argument);
+
+        void AbortParse();
+
+        void AddRemainingRequiredOptions(auto begin, auto end);
+
+        OptionsMapType CreateTableOfMandatoryOptions(auto begin, auto end) const;
 
 
     private:
-        int m_argc = 0;
+        i32 m_argc = 0;
         char** m_argv = nullptr;
         String m_appPath;
 
