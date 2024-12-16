@@ -56,12 +56,10 @@ namespace Ruby {
                 eventBus[key] = std::move(ValueType{});
                 eventBus.at(key).reserve(10);
             }
-
-            auto& inst = GetInstance();
         }
 
     public:
-        RUBY_NODISCARD size_t GetNumberOfEventListeners(EventType type) const {
+        RUBY_NODISCARD size_t GetNumberOfListenersForEvent(EventType type) const {
             return (m_bus.find(type) != m_bus.end()) ? m_bus.at(type).size() : 0;
         }
 
@@ -72,7 +70,11 @@ namespace Ruby {
             });
         }
 
-        template<typename EventType> 
+        RUBY_NODISCARD size_t Size() const {
+            return m_bus.size();
+        }
+
+        template<typename EventType>
             requires std::derived_from<EventType, IEvent>
         void Excite(EventType&& event) {
             RUBY_ASSERT(m_bus.find(event.GetType()) != m_bus.end(), "First you need to initialize the EventManager!");
@@ -115,8 +117,15 @@ namespace Ruby {
             return !(it == std::end(listenersIt->second));
         }
 
-        void Clear() {
-            m_bus.clear();
+        static void Clear() {
+            auto& bus = GetInstance().m_bus;
+
+            for (auto& [key, val] : bus) {
+                writeInConsoleF("key: {}, value.size(): {}", static_cast<i32>(key), val.size());
+            }
+
+
+            bus.clear();
         }
 
     private:
@@ -124,7 +133,7 @@ namespace Ruby {
     };
 
 
-    template<typename EventType>    
+    template<typename EventType>
         requires std::derived_from<EventType, IEvent>
     RUBY_FORCEINLINE void exciteEvent(EventType&& event) {
         EventManager::GetInstance().Excite(std::forward<EventType>(event));

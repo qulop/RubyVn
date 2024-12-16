@@ -1,7 +1,8 @@
 #pragma once
 
+#include <utility/Definitions.hpp>
+#include <utility/Enum.hpp>
 #include <types/StdInc.hpp>
-#include <utility/RubyUtility.hpp>
 
 
 namespace Ruby {
