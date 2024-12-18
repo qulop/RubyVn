@@ -10,30 +10,27 @@
 
 using namespace Ruby;
 
+ProgramOptions getApplicationOptions(int argc, char** argv) {
+    auto&& [defaultWidth, defaultHeight] = Platform::getScreenResolution();
 
-ProgramOptions initApplicationOptions(int argc, char** argv) {
-    using Ruby::OptionArgumentType;
-
-    auto&& [screenX, screenY] = Platform::getScreenResolution();
-    auto&& [defaultWidth, defaultHeight] = std::make_pair(static_cast<i32>(screenX * 0.9),
-                                                          static_cast<i32>(screenY * 0.95));
-
-    ProgramOptions opts { argc, argv, {
-        { "width", CLI_ARG_INT, defaultWidth },
-        { "height", CLI_ARG_INT, defaultHeight },
-        { "resizable", CLI_ARG_BOOL, true },
-        { "log-directory", CLI_ARG_STRING },
-        { "full-screen", CLI_ARG_NONE },
-        { "max-fps", CLI_ARG_INT },
-        { "test-mode", CLI_ARG_NONE },
-    }};
+    std::initializer_list<CmdLineOption> optionsList = {
+        { "width", OptionArgType::INT, defaultWidth },
+        { "height", OptionArgType::INT, defaultHeight },
+        { "resizable", OptionArgType::BOOL, true },
+        { "log-directory", OptionArgType::STRING },
+        { "full-screen", OptionArgType::NONE },
+        { "max-fps", OptionArgType::INT },
+        { "test-mode", OptionArgType::NONE },
+        { "merry-xmas", OptionArgType::NONE },  // For future fun purposes...
+    };
+    ProgramOptions opts { argc, argv, optionsList };
 
     return opts;
 }
 
 
 i32 main(int argc, char** argv) {
-    auto options = std::move(initApplicationOptions(argc, argv));
+    auto options = std::move(getApplicationOptions(argc, argv));
     if (!options.IsParseProcessed())
         return EXIT_FAILURE;
 
